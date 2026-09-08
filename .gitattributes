@@ -1,0 +1,9 @@
+* text=auto eol=lf
+artifacts/** -text
+data/** -text
+docs/original_submission/** -text
+assets/dashboard_data.json -text
+assets/*.html -text
+*.pdf binary
+*.pptx binary
+*.png binary

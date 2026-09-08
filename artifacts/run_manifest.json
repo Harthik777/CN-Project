@@ -1,0 +1,35 @@
+{
+  "created_at_utc": "2026-07-25T11:30:42.635274+00:00",
+  "seed": 42,
+  "python": "3.14.3 (tags/v3.14.3:323c59a, Feb  3 2026, 16:04:56) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "dependencies": {
+    "numpy": "2.4.4",
+    "pandas": "3.0.2",
+    "scikit_learn": "1.8.0",
+    "lightgbm": "4.6.0",
+    "torch": "2.11.0+cpu"
+  },
+  "source_sha256": {
+    "config.py": "04746d258a089b9ffcf4777ac65e032534c7a4ccfefd406dfe358db575ff02fd",
+    "run_all.py": "54361fff570378722a924e671f2f7e27c78859ace8cdd96d707346738503ed4a",
+    "src/generate_data.py": "638f07814d59db0532f7b710707005a661f9436898545d6048ecbfa551a31d64",
+    "src/features.py": "645ba5dc15ffbe4c5d766ffa72cd33d23591241fe631f3a4cb5aa26c82f35d84",
+    "src/models.py": "ba50ed384fb5172986cbaf5f390a95a470acd7b6cee983f4d43a1897cb7a862c",
+    "src/models_seq.py": "007a0b74f2acd041620537897fdae2cb1792a4c6b003cd8d62edbb7051d32643",
+    "src/classify.py": "d3a43852af846f8f7f6dbadcc3f0c518b537d0e6105a54d1f49390029855b0cf",
+    "src/risk.py": "2437fca3a2abddfb50173c1fe49348fc65c3ba1dda48df710d0e1cedc26be877",
+    "src/drift.py": "46bcc3da135858322807c2e907456c0ac528bc469dfaebbd64d8147882803571",
+    "src/evaluate.py": "3c0569e0d3cfc7567b60aa9c76ee2abc1fe9ef7729d25cca1df07bb02a796943",
+    "src/explain.py": "cc15c3f421dbbd4b3c693d822dda354894c52f3f45a09e94491c7e125a5947b4",
+    "src/feedback.py": "fa18c1830017b37863ad27597c262a10f7ca163fc50685956a42731f178b5be2",
+    "src/inference.py": "39ee6e87c800e445bbf8ab9b5ab3a339903e87239dc9072a577cc381f9219ae5"
+  },
+  "artifact_sha256": {
+    "artifacts\\results.json": "eec169db526f75387da1e7cb1c58a596c5e95e5cfca28c0b5ea4575ddfa9b1be",
+    "data\\scored_events.parquet": "7874cd7c80530f6d6489fefea09731e31ac625a4b1dbcca59192a3285ceffb6d",
+    "artifacts\\model_bundle.joblib": "b78b6a707c37e3f3ed6615a8571917001c91c756a216d6c9e2cdf658f59999e6",
+    "artifacts\\autoencoder.pt": "dbc2fc72da519191c96f2eb0abbebb2e84305135975ff3edf391a6e68101603c",
+    "artifacts\\sequence_autoencoder.pt": "0b3231d0c815c8c69e0a00780f19f399324f8059866905e16b5e8d464225aeec"
+  }
+}

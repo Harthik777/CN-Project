@@ -1,0 +1,30 @@
+{
+  "dataset": "SPEDIA insider-threat (Zenodo 15495572), real Wazuh host telemetry",
+  "source": "https://zenodo.org/records/15495572",
+  "input_sha256": "68a96363d8ec6d704f8508a301de72bd929e38ae72b1a6e8c5486f8a46b89d75",
+  "events": 70878,
+  "train_events": 42526,
+  "test_events": 28352,
+  "users": 17,
+  "split_timestamp": "2025-03-26 11:25:35",
+  "evaluation_protocol": "Chronological 60%/40% split; scaler and IsolationForest fitted on the first window only; Wazuh severity hidden until test scoring.",
+  "label": "Wazuh alert Level >= 12 (independent rule-severity proxy, not insider ground-truth)",
+  "positive_rate": 0.020950902934537247,
+  "detector": "unsupervised IsolationForest on 7 causal behavioural features (no command/rule text)",
+  "roc_auc": 0.44990184526534405,
+  "pr_auc": 0.017599906405725174,
+  "budget": 0.05,
+  "precision_at_budget": 0.01058574453069866,
+  "recall_at_budget": 0.025252525252525252,
+  "false_positives_at_budget": 1402,
+  "diagnostic": {
+    "offhours_rate_high_severity": 0.04882154882154882,
+    "offhours_rate_normal": 0.07576194250306217,
+    "high_severity_examples": [
+      "Audit: Highly Suspicious Command executed: /bin/nc",
+      "Audit: Highly Suspicious Command executed: /usr/sbin/john",
+      "Audit: Highly Suspicious Command executed: /usr/bin/dash"
+    ]
+  },
+  "finding": "The high-severity events are signature-defined command executions (e.g. /bin/nc) run in-hours at ordinary volume, so they are behaviourally invisible. A behavioural-only detector correctly does not surface them; they are caught by rules. This real-data observation empirically motivates SentinelUEBA's hybrid rules + behavioural design rather than behavioural-only anomaly detection."
+}

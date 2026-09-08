@@ -1,0 +1,12 @@
+.git
+.env*
+.review_deps
+.venv
+review_source
+output
+frontend/node_modules
+frontend/dist
+**/__pycache__
+data
+docs/original_submission
+report
