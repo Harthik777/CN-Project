@@ -55,7 +55,7 @@ Use Python 3.11+ in an isolated environment. Saved scikit-learn estimators were 
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\python -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python -m pip install -r requirements-api.txt
 .\.venv\Scripts\python -m unittest discover -s tests -v
 .\.venv\Scripts\python -m src.inference --input data/access_logs_sample.csv --output output/inference_replay.parquet --policy top_2pct
 ```
@@ -82,7 +82,7 @@ npm ci
 npm run build
 ```
 
-This checks TypeScript and publishes the offline HTML into `assets/`. `npm run dev` launches the development server. The source GitHub Actions workflow covers Python/API tests and the frontend build. The separate `codex/public-demo` branch is the GitHub Pages deployment artifact. Local verification passed 41 tests; see workflow results for remote verification status.
+This checks TypeScript and publishes the offline HTML into `assets/`. `npm run dev` launches the development server. The source GitHub Actions workflow covers Python/API tests and the frontend build. The separate `codex/public-demo` branch is the GitHub Pages deployment artifact. All 41 tests and the frontend build also passed in a [fresh Linux GitHub Actions run](https://github.com/Harthik777/CN-Project/actions/runs/34265825462).
 
 ## Analyst feedback
 

@@ -2,6 +2,8 @@
 
 Reviewed 8 September 2026 against the supplied archive, source code, recorded evidence and running demo. The linked GitHub repository was empty at inspection.
 
+**Subsequent implementation, 9 September:** the project now includes a connected FastAPI replay service, isolated sessions, transactional event/feedback storage, restart/chunk-equivalence tests and a live React investigation view. The public preview works over HTTPS; permanent backend hosting is still pending a valid provider connection. All 41 tests and the frontend build passed on GitHub Actions. The original findings below describe the pre-service assessment; see [BACKEND.md](BACKEND.md) for the implemented guarantees and [PUBLIC_DEPLOYMENT.md](PUBLIC_DEPLOYMENT.md) for current hosting limits. Independent real-data evaluation and high-throughput incremental streaming remain outstanding.
+
 ## Assessment
 
 **A strong portfolio foundation, roughly 7/10 in its submitted state on my qualitative rubric.** The project has enough depth for serious interview discussion: causal features, multiple modelling approaches, operational thresholds, explanations, drift handling and a usable investigation console. It is substantially more developed than a notebook-only classifier.

@@ -2,6 +2,9 @@
 
 ## Connected backend preview — 9 September 2026
 
+- Verified [source build and all 41 tests on Linux](https://github.com/Harthik777/CN-Project/actions/runs/34265825462), source commit `ed76058f4acac6fde52d909c0abd91fc3e060e0b`.
+- Verified [Pages deployment](https://github.com/Harthik777/CN-Project/actions/runs/34265708624), artifact commit `f6743289aeab459658ae72494727b325a855e812`.
+- Anonymous Pages GET returned HTTP 200 with 5,321,741 bytes, exactly matching the local final build; SHA-256 `863968899f84f359aa517a7becf683e6adeab8b568c32bbff1e3952dbb11d346`.
 - Frontend: [SentinelUEBA](https://harthik777.github.io/CN-Project/).
 - Temporary backend: [Live API](https://bacteria-believe-arnold-rogers.trycloudflare.com/api/health) and [API documentation](https://bacteria-believe-arnold-rogers.trycloudflare.com/docs).
 - The API process and Cloudflare quick tunnel run on the project host computer. This is a public preview, not permanent remote hosting; the computer and both processes must remain online. A restarted tunnel can receive a different URL.
