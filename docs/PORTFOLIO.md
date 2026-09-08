@@ -1,12 +1,18 @@
-# Course presentation and résumé pack
+# Harthik M V — ML and Data Engineering Portfolio
+
+**Aspiring Machine Learning Engineer / Data Engineer**
+
+Project: [SentinelUEBA](https://sentinelueba-harthik.onrender.com/#live) · [GitHub](https://github.com/Harthik777/CN-Project)
 
 ## Project title and pitch
 
-**SentinelUEBA — Reliable Network-Access Monitoring over HTTP**
+**SentinelUEBA — ML-Powered Network Access Analytics**
 
-“A computer-networks and security project that transports access events to an explainable monitoring API. It handles retries, ordering and isolated analyst reviews, and includes reproducible batching experiments. I extended an attributed UEBA baseline into a free public demonstration with tested delivery behaviour.”
+“My modified SentinelUEBA project connects machine learning inference with reliable event processing. I developed the application workflow around validated ingestion, explainable predictions, isolated sessions and a persistent local audit trail, and deployed a public demo. I evaluated batching and delivery correctness with reproducible experiments. The project combines my interests in ML engineering and data engineering while addressing Computer Networks course concepts.”
 
-Use the first person only for work you understand, contributed to and can explain. The original submission and model training credit Induj Gupta; current extensions used coding-assistant support. Follow your course's disclosure requirements.
+Short profile: “Aspiring Machine Learning Engineer / Data Engineer interested in turning event data and trained models into reliable, explainable applications.”
+
+Inspiration and retained code/model components are acknowledged in [PROVENANCE.md](PROVENANCE.md), alongside the modifications and coding-assistant support. The project title and résumé bullets below focus on the implemented engineering work.
 
 ## Five-minute assessment demo
 
@@ -21,22 +27,40 @@ Use the first person only for work you understand, contributed to and can explai
 
 Wake the service before presenting. Prepare a saved experiment report and the local demo as backups. Do not make a long benchmark run part of a five-minute demonstration.
 
-## Résumé bullets
+## Machine Learning Engineer résumé version
 
-Choose two or three bullets that reflect your actual participation:
+- Integrated PyTorch autoencoder/GRU models, Isolation Forest and LightGBM into a FastAPI inference service with causal features, risk scores and investigation explanations.
+- Developed a React model-investigation workflow with policy thresholds, per-IP context and server-side analyst feedback; deployed the application using Docker and Render.
+- Verified inference consistency across batch boundaries and local restart, with 41 automated tests and reproducible HTTP experiments covering 18 local/cloud timing trials.
 
-- Extended an attributed UEBA prototype into a publicly deployed React/FastAPI application with HTTPS ingestion, isolated sessions, model inference and a SQLite analyst-review audit.
-- Implemented transactional event delivery with duplicate suppression, conflict detection and chronological replay; verified batch/restart equivalence and failure behaviour through automated tests and HTTP integration experiments.
-- Designed reproducible HTTP batching experiments on a fixed 168-event workload, recording client/server timings and validating consistent outputs across local and free cloud deployments.
+Skills demonstrated: **Python, PyTorch, scikit-learn, LightGBM, feature computation, inference serving, evaluation, FastAPI, Docker**. The retained models are integrated pretrained components; the published benchmark is separate from the new service experiments.
 
-Technology line: **Python, FastAPI, React, TypeScript, HTTP/HTTPS, SQLite, Docker, GitHub Actions**. Describe the supplied PyTorch/LightGBM models as integrated components unless you personally trained or modified them.
+## Data Engineer résumé version
 
-Keep the public demo and repository links on the résumé. Avoid “99% real-world accuracy,” “built the entire AI pipeline,” “exactly-once distributed processing,” “production-ready,” “zero packet loss” or a throughput figure extrapolated from this small replay experiment. None is established by the current evidence.
+- Built a validated event-ingestion workflow with UTC normalization, chronological replay, duplicate suppression and conflict detection, backed by transactional SQLite storage.
+- Implemented isolated event histories and an append-only analyst-review audit with idempotent requests, versioned model/source identity and exportable evidence.
+- Designed fixed-workload batching experiments across local and public-cloud APIs; all eleven delivery checks passed in each environment, with identical outputs across nine trials per environment.
+
+Skills demonstrated: **Python, SQL/SQLite, data validation, event ordering, idempotency, transactional storage, HTTP APIs, reproducibility, GitHub Actions**. The current implementation uses bounded chronological replay and a single worker; it does not claim a distributed streaming engine.
+
+Use two or three bullets for the target role and include the live demo and repository links. Keep synthetic model metrics, measured service timings and implemented features distinct.
+
+## Interview walkthrough by role
+
+| Target | Start with | Explain in code | Evidence |
+|---|---|---|---|
+| ML Engineer | Raw event → causal features → model scores → explanation | `src/inference.py`, `backend/app.py`, fixed policy thresholds and model/source identity | Real-model replay/restart regression, model audit and live scoring |
+| Data Engineer | Validated request → ordered event log → transaction → replay | `backend/schemas.py`, `backend/store.py`, duplicate/conflict rules and review history | Rejected batches leave state unchanged; retries avoid extra writes |
+| CN course assessment | HTTP client/server flow and per-IP behaviour | Protocol responses, session access and batching | [Network lab](NETWORK_LAB.md) and [measured results](RESULTS.md) |
 
 ## Viva preparation
 
 | Question | Answer to understand and demonstrate |
 |---|---|
+| How does the model reach the application? | FastAPI loads saved models once, validates events, computes features and scores, and returns stored outputs to the React client. |
+| How do you prevent future information from entering a prediction? | Feature and sequence construction use the available chronological prefix. Tests append future events and check that earlier features and compared outputs stay consistent. |
+| What is your data-quality boundary? | The API rejects invalid fields, missing timezone offsets and extra target/score fields before writing. Event IDs and chronological rules provide additional integrity checks. |
+| What is reproducible about the experiment? | Each trial uses the same input hash, model/source identity and policy, starts a fresh session and records the harness hash plus request measurements. |
 | Why is this a computer-networks project? | It implements and measures an HTTP client/server monitoring system, including application delivery, transport boundaries, network access security and per-IP behaviour. The models provide the security workload. |
 | If TCP is reliable, why deduplicate? | A client can be uncertain whether a transaction committed before it retries. Transport reliability within a connection does not assign transaction IDs or suppress a second application request. |
 | Is POST idempotent? | Not automatically. This API explicitly deduplicates event/review submissions using IDs and content. Creating a session does not have that guarantee. |
@@ -48,10 +72,10 @@ Keep the public demo and repository links on the résumé. Avoid “99% real-wor
 | Does CORS secure the API? | CORS controls browser access across origins. The bearer capability authorizes session operations; a non-browser client is not stopped by CORS. |
 | Are the IP addresses actual captured traffic? | No. They are synthetic access-log fields. Actual HTTP(S) requests transport those records to the backend during the network experiment. |
 | What does 100% precision mean here? | At one frozen threshold on the supplied synthetic benchmark, no returned alerts are false positives, but more than half the attacks are missed. It is not general real-world accuracy. |
-| What did you build versus reuse? | Show the contribution matrix, relevant commits and tests. Credit the supplied generator, model pipeline, trained artifacts and original evaluation. |
+| What did you modify, and what inspired it? | Explain the inference API, event/review pipeline, live UI, deployment and experiments in this project. The provenance record identifies the inspiration and retained baseline code/models. |
 
 ## Submission contents
 
-Use [ACADEMIC_REPORT.md](ACADEMIC_REPORT.md) as the current report, [NETWORK_LAB.md](NETWORK_LAB.md) as the lab manual, [RESULTS.md](RESULTS.md) and its JSON files as experimental evidence, and [BACKEND.md](BACKEND.md) for installation. Include the current source revision, CI link, public demo URL and [LICENSE](../LICENSE). The original submitted report/deck remain attributed baseline references; they predate the live service.
+Use [ACADEMIC_REPORT.md](ACADEMIC_REPORT.md) as Harthik's current project report, [NETWORK_LAB.md](NETWORK_LAB.md) as the lab manual, [RESULTS.md](RESULTS.md) and its JSON files as experimental evidence, and [BACKEND.md](BACKEND.md) for installation. Include the current source revision, CI link, public demo URL and [LICENSE](../LICENSE). Historical baseline documents remain in `original_submission/`; they predate the modified live application.
 
 Add your course, team details and required formatting only after checking the actual rubric. Rehearse explaining the store transaction and one network experiment without relying on the slides or dashboard text.

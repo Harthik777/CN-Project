@@ -1,8 +1,19 @@
-# SentinelUEBA — Reliable Network-Access Monitoring over HTTP
+# SentinelUEBA — ML-Powered Network Access Analytics
 
-A computer-networks and security course project that transports access logs over HTTP/HTTPS, ranks suspicious activity and preserves analyst decisions. It combines causal entity/IP features, attributed anomaly/classifier models, a React investigation console and a FastAPI replay service with isolated sessions and a transactional SQLite audit.
+**Harthik M V · Aspiring Machine Learning Engineer / Data Engineer**
 
-**Status:** publicly deployed academic/portfolio prototype using synthetic access data. Included models and original benchmark metrics come from the attributed submission; current extensions add the connected service, delivery guarantees, network experiments and investigation workflow. See [provenance](docs/PROVENANCE.md).
+A modified personal project connecting machine learning inference with reliable event processing: ingest network-access logs, compute behavioural features and risk scores, investigate model evidence, and preserve analyst decisions. The application combines a FastAPI inference service, React console, isolated sessions and a transactional SQLite audit. It also serves as a Computer Networks course project through its HTTP delivery and batching experiments.
+
+**Live status:** publicly deployed on Render Free, with synthetic access data and reproducible experiments. Harthik's project modifications focus on inference serving, data validation, event/review storage, the connected investigation workflow, testing and deployment. The project draws inspiration from Induj Gupta's SentinelUEBA work and retains components from that MIT-licensed baseline; the [source and contribution record](docs/PROVENANCE.md) identifies reused code, pretrained artifacts and new engineering work.
+
+## ML and data engineering focus
+
+| Area | What this project demonstrates |
+|---|---|
+| Machine learning engineering | Saved-model integration, causal feature computation, explainable inference, fixed-threshold evaluation and reproducible model/source identity |
+| Data engineering | Strict event schemas, UTC normalization, chronological replay, duplicate/conflict handling, transactional storage and analyst audit history |
+| Deployment and verification | Docker, FastAPI, React/TypeScript, GitHub Actions, public HTTPS and measured local/cloud experiments |
+| Computer Networks coursework | Client/server protocols, application delivery semantics, session isolation, per-IP evidence and HTTP batching trade-offs |
 
 ## Course and portfolio evidence
 
@@ -11,7 +22,7 @@ A computer-networks and security course project that transports access logs over
 | [Current academic report](docs/ACADEMIC_REPORT.md) | Problem, CN objectives, architecture, implementation, evaluation and limitations |
 | [Computer networks lab](docs/NETWORK_LAB.md) | HTTP batching, retry semantics, ordering, session isolation and repeatable commands |
 | [Measured results](docs/RESULTS.md) | Local and Render experiments with raw JSON evidence |
-| [Presentation and résumé pack](docs/PORTFOLIO.md) | Five-minute demonstration, contribution-aware résumé bullets and viva answers |
+| [Presentation and résumé pack](docs/PORTFOLIO.md) | ML Engineer and Data Engineer résumé variants, project pitch, demonstration and viva answers |
 
 The live console exposes source-IP fan-out, failure ratio and activity windows. The lab replays identical inputs in different batch sizes, checks matching outputs and tests application delivery failures through real HTTP requests. It records client and server timings separately.
 
@@ -114,4 +125,6 @@ Saving or importing feedback does not retrain a model. The existing pipeline lea
 
 The current course deliverable includes a public service, a reproducible networking lab and measured correctness/performance evidence. Extensions with the most research value are independent labelled telemetry evaluation and incremental state processing, compared against the existing replay reference. The [presentation pack](docs/PORTFOLIO.md) explains how to demonstrate and defend the implemented work; the [initial project review](docs/PROJECT_REVIEW.md) preserves the baseline assessment.
 
-Original code and submission attribution: **Induj Gupta**, MIT license. See [LICENSE](LICENSE). Document personal contributions accurately when presenting this project.
+## Project ownership and acknowledgements
+
+This modified project is maintained and presented by **Harthik M V**. Inspiration and reused baseline components are credited to **Induj Gupta**. The original MIT notice is preserved in [LICENSE](LICENSE); component-level details and development assistance are recorded in [PROVENANCE.md](docs/PROVENANCE.md).

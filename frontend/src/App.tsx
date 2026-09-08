@@ -1637,8 +1637,8 @@ export default function App() {
               <BellRing size={17} />
               <span>{DATA.operating_points[policy].n_flagged}</span>
             </button>
-            <span className="profile-badge" title="Induj Gupta">
-              IG
+            <span className="profile-badge" title="Harthik M V · Aspiring Machine Learning Engineer / Data Engineer" aria-label="Project by Harthik M V">
+              HM
             </span>
           </div>
         </header>

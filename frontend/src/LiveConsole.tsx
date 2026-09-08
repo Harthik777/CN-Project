@@ -138,9 +138,10 @@ export default function LiveConsole() {
 
   return <main className="live-workspace view-enter">
     <section className="live-intro">
-      <div><div className="eyebrow">CONNECTED INVESTIGATION</div>
+      <div><div className="eyebrow">ML INFERENCE · RELIABLE EVENT PIPELINES</div>
         <h2>From raw events to a reviewed finding</h2>
-        <p>Submit synthetic access events, inspect predictions computed by the saved models, and save analyst decisions to the backend.</p></div>
+        <p>Submit synthetic access events, inspect predictions computed by the saved models, and save analyst decisions to the backend.</p>
+        <p className="live-owner"><strong>Harthik M V</strong> · Aspiring Machine Learning Engineer / Data Engineer</p></div>
       <span className={`live-connection ${health ? "online" : ""}`}><Server size={16}/>{health ? "Inference API connected" : "Connecting / unavailable"}</span>
     </section>
 

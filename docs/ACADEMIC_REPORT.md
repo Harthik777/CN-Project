@@ -1,12 +1,14 @@
-# SentinelUEBA: Reliable Network-Access Monitoring over HTTP
+# SentinelUEBA: ML-Powered Network Access Analytics
 
-Computer Networks course project · Current implementation report · September 2026
+**Modified project by Harthik M V** · Aspiring Machine Learning Engineer / Data Engineer
+
+Computer Networks course project · ML inference and reliable event processing · September 2026
 
 [Public demonstration](https://sentinelueba-harthik.onrender.com/#live) · [Source](https://github.com/Harthik777/CN-Project) · [Experiment results](RESULTS.md)
 
 ## Abstract
 
-SentinelUEBA demonstrates a client/server system for analysing chronological network-access logs and preserving analyst decisions. A React client sends validated event batches over HTTPS to a FastAPI service. The backend computes causal behavioural features, executes attributed pretrained models, stores results in SQLite, and exposes source-IP evidence for investigation. The project examines application-level reliability through duplicate suppression, conflict detection, ordering and session isolation. Reproducible HTTP experiments compare batch sizes on identical workloads and separate client request time from server work. The system is publicly deployed on a free hosting tier, with an offline benchmark console and a local API for rehearsals. Synthetic-data evaluation and temporary cloud storage bound its claims.
+SentinelUEBA is Harthik M V's modified project combining machine learning inference and reliable event processing for network-access analytics. A React client sends validated event batches over HTTPS to a FastAPI service. The backend computes causal behavioural features, executes saved models, stores results in SQLite, and exposes source-IP evidence for investigation. The ML engineering focus is model integration, explainable serving and reproducibility; the data engineering focus is validation, chronology, duplicate handling and transactional audit history. As a Computer Networks course project, it evaluates application-level reliability and HTTP batching on identical workloads. The system is publicly deployed on a free hosting tier, with an offline benchmark console and a local API for rehearsals. Synthetic-data evaluation and temporary cloud storage bound its claims.
 
 ## 1. Problem and objectives
 
@@ -16,9 +18,9 @@ The course objectives are to implement and evaluate: (1) a documented HTTP clien
 
 ## 2. Scope and contribution
 
-The supplied MIT-licensed submission credits **Induj Gupta** and contains the original data generator, detection pipeline, trained models and evaluation artifacts. Those components are reused with attribution. The current project extends that baseline with the HTTP API, transactional event/review storage, session capabilities, live React integration, feedback validation, deployment, regression checks and networking experiments. Development of these extensions used coding-assistant support. See the detailed [source and contribution record](PROVENANCE.md).
+**Harthik M V's project modifications** include the HTTP inference API, transactional event/review storage, session capabilities, live React integration, feedback validation, deployment, regression checks and networking experiments. Together these connect the ML computation to a tested data-processing and investigation workflow. Development used coding-assistant support.
 
-This report documents the extension; it does not claim new model training or personal authorship of the supplied ensemble. Students should disclose the reused work and assistance according to their course rules and explain the implementation and trade-offs themselves.
+The project was inspired by **Induj Gupta's SentinelUEBA work**. The current repository also retains its MIT-licensed generator and model-pipeline components, pretrained models and original evaluation artifacts. The benchmark metrics describe those retained artifacts; the HTTP experiments measure the modified application. See the [source and contribution record](PROVENANCE.md) for the component-level distinction. No new model-training run is claimed in this report.
 
 ## 3. System design
 
