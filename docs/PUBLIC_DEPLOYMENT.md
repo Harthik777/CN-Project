@@ -1,5 +1,15 @@
 # Public demo deployment
 
+## Harthik's ML/Data Engineering presentation — 9 September 2026
+
+The public application now identifies **Harthik M V — Aspiring Machine Learning Engineer / Data Engineer** in the page title, project badge and live introduction. The README, academic report and portfolio pack describe Harthik's modified project, with separate ML Engineer and Data Engineer résumé versions. Inspiration and retained components remain documented in the provenance record and original MIT notice.
+
+- Source commit `3e075bc39edfff1f42668b8a0af0af4e51c9f0dd` passed [frontend, Python and HTTP integration CI](https://github.com/Harthik777/CN-Project/actions/runs/34270390053).
+- Render deployment `dep-dag6a6ijnfac73dau31g` succeeded in 1m33s on the Free plan. The public HTML contains the new identity and the API returns `ok` with unchanged model/source identity. Verified HTML: 5,323,824 bytes; SHA-256 `fee17619c10ee370ee41a76c158d2d5c5d05e7f246bbcdcd0c651f9c55798089`.
+- Pages artifact `3ef2798208ed7ed4068aaa0e126c5c6367892ab6` [deployed successfully](https://github.com/Harthik777/CN-Project/actions/runs/34270422278). Public HTML matches the local build exactly: 5,323,825 bytes; SHA-256 `83ab4289816fa0eb073e8592ab3b9722e1385c4d3fff9450c7d319c71bb4c4b0`.
+
+This update changes the project presentation and documentation; the measured inference implementation and benchmark artifacts are retained.
+
 ## Academic/networking update — 9 September 2026
 
 - Source commit: `055e38aa0088d06f48d97bb359b14e97413866b9`; [CI passed](https://github.com/Harthik777/CN-Project/actions/runs/34269569143), including all 41 Python tests, a two-trial HTTP socket experiment with eleven correctness checks, and the frontend production build. The workflow retains its network-lab evidence artifact.
