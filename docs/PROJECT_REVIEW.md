@@ -2,7 +2,7 @@
 
 Reviewed 8 September 2026 against the supplied archive, source code, recorded evidence and running demo. The linked GitHub repository was empty at inspection.
 
-**Subsequent implementation, 9 September:** the project now includes a connected FastAPI replay service, isolated sessions, transactional event/feedback storage, restart/chunk-equivalence tests and a live React investigation view. The public preview works over HTTPS; permanent backend hosting is still pending a valid provider connection. All 41 tests and the frontend build passed on GitHub Actions. The original findings below describe the pre-service assessment; see [BACKEND.md](BACKEND.md) for the implemented guarantees and [PUBLIC_DEPLOYMENT.md](PUBLIC_DEPLOYMENT.md) for current hosting limits. Independent real-data evaluation and high-throughput incremental streaming remain outstanding.
+**Subsequent implementation, 9 September:** the project now includes a connected FastAPI replay service, isolated sessions, transactional event/feedback storage, restart/chunk-equivalence tests and a live React investigation view. The backend and full app are deployed on Render with a stable HTTPS URL; the free host's disk is ephemeral and its service can sleep. All 41 tests and the frontend build passed on GitHub Actions. The original findings below describe the pre-service assessment; see [BACKEND.md](BACKEND.md) for the implemented guarantees and [PUBLIC_DEPLOYMENT.md](PUBLIC_DEPLOYMENT.md) for current hosting limits. Durable hosted storage, independent real-data evaluation and high-throughput incremental streaming remain outstanding.
 
 ## Assessment
 

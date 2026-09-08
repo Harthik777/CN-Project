@@ -8,7 +8,7 @@ An explainable security analytics prototype that ranks suspicious access events 
 
 The **Live inference** view connects raw event submission, real model scoring, evidence inspection and server-side analyst feedback. See [backend setup and guarantees](docs/BACKEND.md). The original benchmark replay remains available in Alerts, Topology and Model audit.
 
-**Public demo:** [Open SentinelUEBA](https://harthik777.github.io/CN-Project/). The live view connects to a temporary public backend preview running on the project host computer; it requires that computer and tunnel to stay online. The benchmark replay remains available when the API is offline. Permanent backend hosting needs a valid provider connection. See the [deployment record](docs/PUBLIC_DEPLOYMENT.md).
+**Public full-stack demo:** [Open SentinelUEBA on Render](https://sentinelueba-harthik.onrender.com/#live). The [GitHub Pages frontend](https://harthik777.github.io/CN-Project/) connects to the same Render API. Hosting works independently of the developer's computer. Render Free can sleep when idle; demo sessions use temporary disk and can be lost on sleep, restart or redeployment. Export evidence before leaving. See the [deployment record](docs/PUBLIC_DEPLOYMENT.md).
 
 Open [the self-contained console](assets/SentinelUEBA-React-Console.html) in a modern browser. It needs no installation or internet. Download the HTML before opening it if viewing this README on GitHub.
 

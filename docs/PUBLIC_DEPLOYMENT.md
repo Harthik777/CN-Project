@@ -1,6 +1,26 @@
 # Public demo deployment
 
-## Connected backend preview — 9 September 2026
+## Current deployment: Render — 9 September 2026
+
+- Full app: [SentinelUEBA on Render](https://sentinelueba-harthik.onrender.com/#live).
+- API: [health](https://sentinelueba-harthik.onrender.com/api/health) and [interactive documentation](https://sentinelueba-harthik.onrender.com/docs).
+- Alternate frontend: [GitHub Pages](https://harthik777.github.io/CN-Project/), built with the Render API origin.
+- Render service: `sentinelueba-harthik`, ID `srv-dag5n9fqj5pc73931i8g`, Singapore, Docker, Free plan (512 MB RAM, 0.1 CPU).
+- Successful first deployment: `dep-dag5n9vqj5pc73931j60`, source commit `a7ae81b99286e40b02cb8e4573bcfce604df1c69`. [Render deployment dashboard](https://dashboard.render.com/web/srv-dag5n9fqj5pc73931i8g/deploys/dep-dag5n9vqj5pc73931j60).
+- [GitHub verification passed](https://github.com/Harthik777/CN-Project/actions/runs/34266386830). Render also built the multi-stage Docker image successfully and reported the service live.
+- Health check: `/api/health`. The UI was configured to auto-deploy after CI checks pass. The Docker build serves its own frontend with same-origin API requests and contains no temporary tunnel address.
+
+The [GitHub Pages update](https://github.com/Harthik777/CN-Project/actions/runs/34267029879) also succeeded at artifact commit `409e83dbab2aa40bba18033c98d064837d0f3f55`. Its public HTML matched the tested build exactly: 5,321,726 bytes, SHA-256 `6e5786e4f15b8cc9c5ed05853a19d6a6024b06cc89e3d1d0a794333e3cadaafc`. The final artifact contains the Render API origin and no temporary tunnel URL.
+
+Browser verification on the Render app created a session, scored the 120-event baseline and 48-event campaign, saved an analyst disposition, and recovered all 168 events plus the saved review after a reload. The old local API and Cloudflare tunnel were then stopped. Render's health endpoint still returned HTTP 200 and the browser still retrieved its saved cloud session; the GitHub Pages frontend also connected to Render. The deployment therefore no longer depends on a running local backend.
+
+The public HTTP smoke test against Render scored 168 events, skipped duplicate replay, rejected unauthenticated reads and malformed input, and saved/read two review revisions with idempotent retries. All 48 campaign events and 56 baseline events were flagged at top 2%; these are demo outcomes, not a new held-out evaluation. The baseline request spent 6.47 seconds scoring; the campaign append spent 11.42 seconds, including historical replay. The full smoke check took 23.61 seconds. These timings are a single functional test on the free instance, not a throughput benchmark.
+
+The Render app returned HTTP 200 with 5,321,725 HTML bytes and SHA-256 `ce16a48da53c7822c87d7d6651382695f8006344373ab73ebb88dd756fa31f75`. The health endpoint returned model/source identity `91f67dfe56ef23644bd7aa12cc1e917e6faa844a7cbeedf1c536ace57086504e`, matching the verified model bundle and scoring source.
+
+This deployment does not depend on the developer's computer. It has a stable public Render URL, but it is not an always-on paid service. [Render Free sleeps after inactivity and does not support persistent disks](https://render.com/docs/free). Sessions on its temporary filesystem may disappear on sleep, restart or redeployment; the app displays this and provides evidence export. No paid plan was purchased. A durable disk or external database remains a separate upgrade.
+
+## Historical temporary backend preview — superseded by Render
 
 - Verified [source build and all 41 tests on Linux](https://github.com/Harthik777/CN-Project/actions/runs/34265825462), source commit `ed76058f4acac6fde52d909c0abd91fc3e060e0b`.
 - Verified [Pages deployment](https://github.com/Harthik777/CN-Project/actions/runs/34265708624), artifact commit `f6743289aeab459658ae72494727b325a855e812`.

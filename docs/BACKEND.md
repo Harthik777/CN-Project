@@ -46,7 +46,7 @@ Feedback keeps historical revisions and has a separate idempotency key. Feedback
 
 ## Deployment contract
 
-The included Dockerfile runs a single API worker on port 7860 and serves the built frontend. Mount a durable local volume at `/home/app/state` to retain the database across container replacement. Container-local disk without a volume is ephemeral. SQLite WAL should not be placed directly on an object-store/FUSE bucket mount; use storage with SQLite-compatible locking and durability.
+The included multi-stage Dockerfile builds the frontend from source using Node 24, then runs a single API worker on port 7860 and serves the frontend from the same origin. Open `/#live` for the connected view. Mount a durable local volume at `/home/app/state` to retain the database across container replacement. Container-local disk without a volume is ephemeral. SQLite WAL should not be placed directly on an object-store/FUSE bucket mount; use storage with SQLite-compatible locking and durability.
 
 Configuration:
 
@@ -55,7 +55,7 @@ Configuration:
 - `SENTINEL_STORAGE_LABEL`: the accurate storage/retention description shown to visitors.
 - `VITE_API_BASE`: frontend build-time API origin when hosted separately. Omit when the backend serves the HTML itself, and open `/#live`.
 
-The Python service requires CPU model dependencies. GitHub Pages serves the frontend only. The container is prepared for a Python-capable host; a successful remote container build and a persistent volume must be verified on the chosen provider before claiming permanent backend deployment. Existing Hugging Face environment credentials returned HTTP 401 during this work.
+The service is deployed on Render Free in Singapore at [sentinelueba-harthik.onrender.com](https://sentinelueba-harthik.onrender.com/#live). Render built the Docker image and the public API passed real inference and feedback smoke tests. GitHub Pages serves a second frontend connected to the same API. The configured free instance has 512 MB RAM and uses ephemeral disk; there is no persistent volume. Idle sleep and container replacement can discard sessions. The website URL is stable and does not require a local tunnel or the developer's computer. See [PUBLIC_DEPLOYMENT.md](PUBLIC_DEPLOYMENT.md) for service identity and evidence.
 
 ## Evidence and boundaries
 
