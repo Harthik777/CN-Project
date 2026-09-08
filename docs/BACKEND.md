@@ -59,6 +59,8 @@ The service is deployed on Render Free in Singapore at [sentinelueba-harthik.onr
 
 ## Evidence and boundaries
 
+The [computer networks laboratory](NETWORK_LAB.md) adds repeatable socket-level HTTP requests for batching and application delivery checks. [RESULTS.md](RESULTS.md) publishes nine measured trials and eleven correctness observations on each of the local and Render services. The live UI reconstructs IP activity windows from the session's returned raw logs through the selected event and handles expired/unavailable saved sessions with a prompt to create a new one.
+
 Local verification passed 41 tests, including actual-model agreement for uninterrupted, chunked and restarted ingestion. Labels and flags matched exactly; numeric channels were checked with absolute/relative tolerance of `1e-6`. The 168-event demonstration has 120 baseline accesses and 48 staged campaign events. Under top 2%, all 48 campaign events were flagged and 56 baseline events were also flagged. These are demonstration outcomes, not a new held-out evaluation or a claim of real-world precision.
 
 The original synthetic benchmark remains available in the Alerts, Topology and Model audit views. Its data, metrics and browser-only review/export flow are separate from the live session and server audit trail. A production release still needs independently labelled telemetry evaluation, durable hosted storage, organisational authentication, operational monitoring and a more scalable incremental state engine.

@@ -10,6 +10,7 @@ type LiveEvent = {
   resource_accessed: string; auth_result: string; risk: number; pred_label: string;
   is_alert: boolean; reason: string; ae_score: number; iso_score: number;
   seq_score: number; attack_prob: number; entity_hist_count: number;
+  protocol: string;
   [key: string]: unknown;
 };
 type Decision = { sequence: number; event_id: number; disposition: string; note: string; saved_at: number };
@@ -18,6 +19,11 @@ type Snapshot = { session_id: string; policy: PolicyKey; model_id: string;
 type Health = { status: string; model_id: string; thresholds: Record<PolicyKey, number>; storage: string; max_events: number };
 type Scenarios = Record<string, { title: string; description: string; events: unknown[] }>;
 const title = (value: string) => value.replaceAll("_", " ");
+
+class ApiError extends Error {
+  status: number;
+  constructor(status: number, message: string) { super(message); this.status = status; }
+}
 
 async function request<T>(path: string, credential?: Credential | null, body?: unknown): Promise<T> {
   const controller = new AbortController();
@@ -33,7 +39,7 @@ async function request<T>(path: string, credential?: Credential | null, body?: u
       throw new Error("The inference API is unavailable at this address. The benchmark replay remains available in Alerts.");
     }
     const data = await response.json();
-    if (!response.ok) throw new Error(`${response.status}: ${typeof data.detail === "string" ? data.detail : "Request failed"}`);
+    if (!response.ok) throw new ApiError(response.status, `${response.status}: ${typeof data.detail === "string" ? data.detail : "Request failed"}`);
     return data as T;
   } catch (error) {
     if (error instanceof Error && error.name === "AbortError") {
@@ -69,10 +75,21 @@ export default function LiveConsole() {
   const pendingReview = useRef<{ key: string; request_id: string } | null>(null);
 
   async function refresh(current = credential) {
-    if (!current) return;
-    const state = await request<Snapshot>(`/api/sessions/${current.session_id}`, current);
-    setSnapshot(state);
-    setPolicy(state.policy);
+    if (!current) return false;
+    try {
+      const state = await request<Snapshot>(`/api/sessions/${current.session_id}`, current);
+      setSnapshot(state);
+      setPolicy(state.policy);
+      return true;
+    } catch (error) {
+      if (error instanceof ApiError && (error.status === 401 || error.status === 410)) {
+        setCredential(null); setSnapshot(null); setSelectedId(null); setLastLatency(null);
+        try { localStorage.removeItem(SESSION_KEY); } catch { /* Storage can be unavailable. */ }
+        setNotice("Your previous session is no longer available. It may have expired or the free server may have restarted. Create a new session to continue.");
+        return false;
+      }
+      throw error;
+    }
   }
   async function run(label: string, action: () => Promise<void>) {
     setBusy(label); setError(""); setNotice("");
@@ -103,13 +120,19 @@ export default function LiveConsole() {
     const result = await request<{ accepted: number; duplicates: number; scoring_ms: number }>(
       `/api/sessions/${credential.session_id}/events`, credential, { events });
     setLastLatency(result.scoring_ms);
-    await refresh();
+    if (!await refresh()) return;
     setNotice(`${result.accepted} new events scored · ${result.duplicates} duplicates skipped · results read back from the server.`);
   }
   const events = snapshot?.events || [];
   const alerts = events.filter(e => e.is_alert);
   const visible = [...(onlyAlerts ? alerts : events)].reverse();
   const selected = events.find(e => e.event_id === selectedId) || alerts[alerts.length-1] || events[events.length-1];
+  const selectedTime = selected ? Date.parse(selected.timestamp) : 0;
+  const ipHour = selected ? events.slice(0, events.indexOf(selected)+1).filter(e =>
+    e.source_ip === selected.source_ip && Date.parse(e.timestamp) >= selectedTime-3600000) : [];
+  const ipAccounts = new Set(ipHour.map(e => e.entity_id)).size;
+  const ipFailureRate = ipHour.length ? ipHour.filter(e => e.auth_result === "FAILURE").length/ipHour.length : 0;
+  const ipFiveMinutes = ipHour.filter(e => Date.parse(e.timestamp) >= selectedTime-300000).length;
   const history = snapshot?.feedback.filter(d => d.event_id === selected?.event_id) || [];
   const threshold = health?.thresholds[snapshot?.policy || policy];
 
@@ -136,6 +159,7 @@ export default function LiveConsole() {
         <button className="live-primary" disabled={!!busy || !health} onClick={() => void run("Creating an isolated session…", createSession)}><Play size={15}/>{snapshot ? "New session" : "1. Create session"}</button>
         <button disabled={!!busy} onClick={() => void run("Checking service and saved state…", connect)}><RefreshCw size={15}/>Refresh server state</button>
         <a href={`${API}/docs`} target="_blank" rel="noreferrer">API documentation ↗</a>
+        <a href="https://github.com/Harthik777/CN-Project/blob/codex/full-stack/docs/NETWORK_LAB.md" target="_blank" rel="noreferrer">Computer networks lab ↗</a>
       </div>
       <div className="live-scenarios">
         <div><strong>2. Establish a baseline</strong><p>{scenarios.baseline?.description || "120 synthetic normal accesses."}</p>
@@ -169,16 +193,23 @@ export default function LiveConsole() {
         {selected ? <>
           <div className="live-event-risk"><strong>{selected.risk.toFixed(3)}</strong><span>{title(selected.pred_label)}<small>{selected.is_alert ? "Above policy threshold" : "Below policy threshold"}</small></span></div>
           <p>{selected.reason || "This event is below the alert threshold; no alert explanation was generated."}</p>
-          <dl className="live-evidence"><dt>Observed action</dt><dd>{selected.auth_result} · {selected.resource_accessed}</dd>
+          <h4>Network access evidence</h4>
+          <dl className="live-evidence"><dt>Source IP / reported protocol</dt><dd>{selected.source_ip} · {selected.protocol}</dd>
+            <dt>Accounts using this IP · last hour</dt><dd>{ipAccounts}</dd>
+            <dt>Failed accesses from this IP · last hour</dt><dd>{(ipFailureRate*100).toFixed(1)}%</dd>
+            <dt>Accesses from this IP · last five minutes</dt><dd>{ipFiveMinutes}</dd>
+            <dt>Observed action</dt><dd>{selected.auth_result} · {selected.resource_accessed}</dd>
             <dt>Past entity events</dt><dd>{selected.entity_hist_count}</dd><dt>Classifier attack probability</dt><dd>{(selected.attack_prob*100).toFixed(3)}%</dd>
             <dt>Anomaly channel ranks</dt><dd>AE {selected.ae_score.toFixed(3)} · IF {selected.iso_score.toFixed(3)} · GRU {selected.seq_score.toFixed(3)}</dd></dl>
+          <p className="live-muted">IP windows are calculated from this session's submitted logs through the selected event. Protocol and IP are supplied fields; this demo uses synthetic access logs.</p>
           <form onSubmit={e => { e.preventDefault(); void run("Saving decision to the server…", async () => {
             if (!credential) return;
             const reviewKey = JSON.stringify([credential.session_id, selected.event_id, disposition, note]);
             if (pendingReview.current?.key !== reviewKey) pendingReview.current = {key: reviewKey, request_id: crypto.randomUUID()};
             await request(`/api/sessions/${credential.session_id}/feedback`, credential,
               {request_id: pendingReview.current.request_id, event_id: selected.event_id, disposition, note});
-            await refresh(); pendingReview.current = null; setNotice("Decision saved and read back from the server. Previous decisions remain in the audit history.");
+            if (!await refresh()) return;
+            pendingReview.current = null; setNotice("Decision saved and read back from the server. Previous decisions remain in the audit history.");
           }); }}>
             <label>Analyst disposition<select aria-label="Live analyst disposition" value={disposition} onChange={e => setDisposition(e.target.value)}>
               <option value="needs_investigation">Needs investigation</option><option value="confirmed_attack">Confirmed attack</option><option value="benign">Benign</option></select></label>

@@ -45,6 +45,8 @@ Finish with the actual next experiment: a held-out attack family or campaign shi
 
 ## Résumé wording
 
+The [current course presentation and résumé pack](PORTFOLIO.md) includes the deployed backend, networking experiment and five-minute viva walkthrough. The older wording below covers only the earlier offline extension.
+
 If your contribution is the extension of this supplied project, a supported starting point is:
 
 “Extended an attributed UEBA prototype with snapshot-validated analyst feedback, audit-history regression tests and an offline React investigation demo; analysed precision–recall trade-offs on 115,360 synthetic held-out events.”

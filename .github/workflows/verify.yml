@@ -14,6 +14,25 @@ jobs:
       - run: python -m pip install torch==2.8.0 --index-url https://download.pytorch.org/whl/cpu
       - run: python -m pip install -r requirements-api.txt
       - run: python -m unittest discover -s tests -v
+      - name: Verify networking lab over a real HTTP socket
+        shell: bash
+        run: |
+          mkdir -p output
+          python -m uvicorn backend.app:app --host 127.0.0.1 --port 7860 --workers 1 --no-access-log > output/lab-server.log 2>&1 &
+          api_pid=$!
+          trap 'kill "$api_pid"' EXIT
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:7860/api/health > /dev/null; then break; fi
+            sleep 1
+          done
+          python scripts/network_lab.py --url http://127.0.0.1:7860 --repetitions 1 --batch-sizes 42 168 --output output/ci-network-lab.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: network-lab-evidence
+          path: |
+            output/ci-network-lab.*
+            output/lab-server.log
   frontend:
     runs-on: ubuntu-latest
     defaults:

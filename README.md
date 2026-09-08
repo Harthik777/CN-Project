@@ -1,8 +1,19 @@
-# SentinelUEBA
+# SentinelUEBA — Reliable Network-Access Monitoring over HTTP
 
-An explainable security analytics prototype that ranks suspicious access events for an analyst. It combines past-only entity/IP features, anomaly models, a LightGBM classifier, a React investigation console and a FastAPI live replay service with session isolation and a SQLite feedback audit.
+A computer-networks and security course project that transports access logs over HTTP/HTTPS, ranks suspicious activity and preserves analyst decisions. It combines causal entity/IP features, attributed anomaly/classifier models, a React investigation console and a FastAPI replay service with isolated sessions and a transactional SQLite audit.
 
-**Status:** runnable academic/portfolio prototype using synthetic benchmark data. Included models and published metrics come from the supplied submission; the current workspace adds demo and feedback improvements. See [provenance](docs/PROVENANCE.md) and the [technical assessment](docs/PROJECT_REVIEW.md).
+**Status:** publicly deployed academic/portfolio prototype using synthetic access data. Included models and original benchmark metrics come from the attributed submission; current extensions add the connected service, delivery guarantees, network experiments and investigation workflow. See [provenance](docs/PROVENANCE.md).
+
+## Course and portfolio evidence
+
+| Start here | Contents |
+|---|---|
+| [Current academic report](docs/ACADEMIC_REPORT.md) | Problem, CN objectives, architecture, implementation, evaluation and limitations |
+| [Computer networks lab](docs/NETWORK_LAB.md) | HTTP batching, retry semantics, ordering, session isolation and repeatable commands |
+| [Measured results](docs/RESULTS.md) | Local and Render experiments with raw JSON evidence |
+| [Presentation and résumé pack](docs/PORTFOLIO.md) | Five-minute demonstration, contribution-aware résumé bullets and viva answers |
+
+The live console exposes source-IP fan-out, failure ratio and activity windows. The lab replays identical inputs in different batch sizes, checks matching outputs and tests application delivery failures through real HTTP requests. It records client and server timings separately.
 
 ## Try the demo
 
@@ -101,6 +112,6 @@ Saving or importing feedback does not retrain a model. The existing pipeline lea
 
 ## Next milestones
 
-The [project review](docs/PROJECT_REVIEW.md) defines the highest-value additions for an internship portfolio: real telemetry replay with persistent state, independent generalisation experiments, and incident-level evaluation. The [demo script](docs/DEMO_SCRIPT.md) explains what to show and how to discuss current results accurately.
+The current course deliverable includes a public service, a reproducible networking lab and measured correctness/performance evidence. Extensions with the most research value are independent labelled telemetry evaluation and incremental state processing, compared against the existing replay reference. The [presentation pack](docs/PORTFOLIO.md) explains how to demonstrate and defend the implemented work; the [initial project review](docs/PROJECT_REVIEW.md) preserves the baseline assessment.
 
 Original code and submission attribution: **Induj Gupta**, MIT license. See [LICENSE](LICENSE). Document personal contributions accurately when presenting this project.

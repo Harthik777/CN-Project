@@ -1,0 +1,765 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "url": "https://sentinelueba-harthik.onrender.com",
+  "started_at_utc": "2026-09-08T19:26:39.134534+00:00",
+  "client_python": "3.11.9",
+  "client_os": "Windows",
+  "httpx": "0.28.1",
+  "checkout_revision": "add38841111be81ba4d0ca68ecf82702231a4fac",
+  "harness_sha256": "336ffb565e608f0c7f1a77426008017fabefbe5c81358791e32f08ca4af79c95",
+  "batch_sizes": [
+    42,
+    84,
+    168
+  ],
+  "repetitions": 3,
+  "method": {
+    "data": "synthetic /api/scenarios baseline followed by attack",
+    "policy": "top_2pct",
+    "concurrency": 1,
+    "http2": false,
+    "tls_verification": true,
+    "automatic_retries": false,
+    "warmup": "health plus one unmeasured full replay before timed trials",
+    "order": "batch sizes rotate by one position per repetition",
+    "numeric_comparison": {
+      "fields": [
+        "risk",
+        "attack_prob",
+        "ae_score",
+        "iso_score",
+        "seq_score",
+        "adaptive_unsup",
+        "entity_hist_count"
+      ],
+      "absolute_tolerance": 1e-06,
+      "relative_tolerance": 1e-06
+    },
+    "ignored_ack": "Application discards successful acknowledgement, then resends; no packet loss injected"
+  },
+  "requests": [
+    {
+      "operation": "initial_health",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 221.474,
+      "request_body_bytes": 0,
+      "response_body_bytes": 597
+    },
+    {
+      "operation": "get_synthetic_inputs",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 315.938,
+      "request_body_bytes": 0,
+      "response_body_bytes": 65426
+    },
+    {
+      "operation": "create_session",
+      "status": 201,
+      "http_version": "HTTP/1.1",
+      "client_ms": 161.473,
+      "request_body_bytes": 21,
+      "response_body_bytes": 130
+    },
+    {
+      "operation": "warmup_full_replay",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 12025.818,
+      "request_body_bytes": 65126,
+      "response_body_bytes": 72
+    },
+    {
+      "operation": "read_session",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 283.433,
+      "request_body_bytes": 0,
+      "response_body_bytes": 155544
+    },
+    {
+      "operation": "create_session",
+      "status": 201,
+      "http_version": "HTTP/1.1",
+      "client_ms": 112.368,
+      "request_body_bytes": 21,
+      "response_body_bytes": 130
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 5397.174,
+      "request_body_bytes": 16298,
+      "response_body_bytes": 69
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 6268.108,
+      "request_body_bytes": 16308,
+      "response_body_bytes": 69
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 7448.008,
+      "request_body_bytes": 16316,
+      "response_body_bytes": 70
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 11263.723,
+      "request_body_bytes": 16240,
+      "response_body_bytes": 71
+    },
+    {
+      "operation": "read_session",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 250.7,
+      "request_body_bytes": 0,
+      "response_body_bytes": 155544
+    },
+    {
+      "operation": "create_session",
+      "status": 201,
+      "http_version": "HTTP/1.1",
+      "client_ms": 165.539,
+      "request_body_bytes": 21,
+      "response_body_bytes": 130
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 6374.328,
+      "request_body_bytes": 32594,
+      "response_body_bytes": 69
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 11590.653,
+      "request_body_bytes": 32544,
+      "response_body_bytes": 70
+    },
+    {
+      "operation": "read_session",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 250.62,
+      "request_body_bytes": 0,
+      "response_body_bytes": 155544
+    },
+    {
+      "operation": "create_session",
+      "status": 201,
+      "http_version": "HTTP/1.1",
+      "client_ms": 108.479,
+      "request_body_bytes": 21,
+      "response_body_bytes": 130
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 12082.893,
+      "request_body_bytes": 65126,
+      "response_body_bytes": 72
+    },
+    {
+      "operation": "read_session",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 234.97,
+      "request_body_bytes": 0,
+      "response_body_bytes": 155543
+    },
+    {
+      "operation": "create_session",
+      "status": 201,
+      "http_version": "HTTP/1.1",
+      "client_ms": 108.597,
+      "request_body_bytes": 21,
+      "response_body_bytes": 130
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 6731.259,
+      "request_body_bytes": 32594,
+      "response_body_bytes": 69
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 11480.039,
+      "request_body_bytes": 32544,
+      "response_body_bytes": 71
+    },
+    {
+      "operation": "read_session",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 206.318,
+      "request_body_bytes": 0,
+      "response_body_bytes": 155542
+    },
+    {
+      "operation": "create_session",
+      "status": 201,
+      "http_version": "HTTP/1.1",
+      "client_ms": 142.945,
+      "request_body_bytes": 21,
+      "response_body_bytes": 130
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 11663.111,
+      "request_body_bytes": 65126,
+      "response_body_bytes": 72
+    },
+    {
+      "operation": "read_session",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 455.923,
+      "request_body_bytes": 0,
+      "response_body_bytes": 155544
+    },
+    {
+      "operation": "create_session",
+      "status": 201,
+      "http_version": "HTTP/1.1",
+      "client_ms": 111.015,
+      "request_body_bytes": 21,
+      "response_body_bytes": 130
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 4979.012,
+      "request_body_bytes": 16298,
+      "response_body_bytes": 69
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 6452.569,
+      "request_body_bytes": 16308,
+      "response_body_bytes": 69
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 6847.888,
+      "request_body_bytes": 16316,
+      "response_body_bytes": 69
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 11896.698,
+      "request_body_bytes": 16240,
+      "response_body_bytes": 71
+    },
+    {
+      "operation": "read_session",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 295.124,
+      "request_body_bytes": 0,
+      "response_body_bytes": 155543
+    },
+    {
+      "operation": "create_session",
+      "status": 201,
+      "http_version": "HTTP/1.1",
+      "client_ms": 118.005,
+      "request_body_bytes": 21,
+      "response_body_bytes": 130
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 11585.618,
+      "request_body_bytes": 65126,
+      "response_body_bytes": 72
+    },
+    {
+      "operation": "read_session",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 559.597,
+      "request_body_bytes": 0,
+      "response_body_bytes": 155543
+    },
+    {
+      "operation": "create_session",
+      "status": 201,
+      "http_version": "HTTP/1.1",
+      "client_ms": 113.652,
+      "request_body_bytes": 21,
+      "response_body_bytes": 130
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 4915.41,
+      "request_body_bytes": 16298,
+      "response_body_bytes": 69
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 6586.277,
+      "request_body_bytes": 16308,
+      "response_body_bytes": 69
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 7334.568,
+      "request_body_bytes": 16316,
+      "response_body_bytes": 70
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 11408.092,
+      "request_body_bytes": 16240,
+      "response_body_bytes": 71
+    },
+    {
+      "operation": "read_session",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 283.714,
+      "request_body_bytes": 0,
+      "response_body_bytes": 155544
+    },
+    {
+      "operation": "create_session",
+      "status": 201,
+      "http_version": "HTTP/1.1",
+      "client_ms": 138.943,
+      "request_body_bytes": 21,
+      "response_body_bytes": 130
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 6182.719,
+      "request_body_bytes": 32594,
+      "response_body_bytes": 69
+    },
+    {
+      "operation": "timed_ingest",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 11959.079,
+      "request_body_bytes": 32544,
+      "response_body_bytes": 71
+    },
+    {
+      "operation": "read_session",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 267.314,
+      "request_body_bytes": 0,
+      "response_body_bytes": 155544
+    },
+    {
+      "operation": "retry_after_ignored_ack",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 161.18,
+      "request_body_bytes": 65126,
+      "response_body_bytes": 67
+    },
+    {
+      "operation": "read_session",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 294.212,
+      "request_body_bytes": 0,
+      "response_body_bytes": 155544
+    },
+    {
+      "operation": "conflicting_event_id",
+      "status": 409,
+      "http_version": "HTTP/1.1",
+      "client_ms": 111.922,
+      "request_body_bytes": 399,
+      "response_body_bytes": 47
+    },
+    {
+      "operation": "late_event",
+      "status": 409,
+      "http_version": "HTTP/1.1",
+      "client_ms": 91.977,
+      "request_body_bytes": 403,
+      "response_body_bytes": 71
+    },
+    {
+      "operation": "reversed_batch",
+      "status": 422,
+      "http_version": "HTTP/1.1",
+      "client_ms": 101.877,
+      "request_body_bytes": 792,
+      "response_body_bytes": 52
+    },
+    {
+      "operation": "mixed_valid_invalid_batch",
+      "status": 422,
+      "http_version": "HTTP/1.1",
+      "client_ms": 109.456,
+      "request_body_bytes": 788,
+      "response_body_bytes": 76
+    },
+    {
+      "operation": "read_session",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 279.852,
+      "request_body_bytes": 0,
+      "response_body_bytes": 155544
+    },
+    {
+      "operation": "missing_token",
+      "status": 401,
+      "http_version": "HTTP/1.1",
+      "client_ms": 91.022,
+      "request_body_bytes": 0,
+      "response_body_bytes": 42
+    },
+    {
+      "operation": "create_session",
+      "status": 201,
+      "http_version": "HTTP/1.1",
+      "client_ms": 169.156,
+      "request_body_bytes": 21,
+      "response_body_bytes": 130
+    },
+    {
+      "operation": "another_session_token",
+      "status": 401,
+      "http_version": "HTTP/1.1",
+      "client_ms": 425.25,
+      "request_body_bytes": 0,
+      "response_body_bytes": 40
+    },
+    {
+      "operation": "read_session",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 118.452,
+      "request_body_bytes": 0,
+      "response_body_bytes": 221
+    },
+    {
+      "operation": "save_review",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 115.703,
+      "request_body_bytes": 129,
+      "response_body_bytes": 32
+    },
+    {
+      "operation": "retry_review",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 120.276,
+      "request_body_bytes": 129,
+      "response_body_bytes": 32
+    },
+    {
+      "operation": "conflicting_review_key",
+      "status": 409,
+      "http_version": "HTTP/1.1",
+      "client_ms": 104.268,
+      "request_body_bytes": 117,
+      "response_body_bytes": 56
+    },
+    {
+      "operation": "review_revision",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 109.028,
+      "request_body_bytes": 126,
+      "response_body_bytes": 32
+    },
+    {
+      "operation": "read_session",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 349.891,
+      "request_body_bytes": 0,
+      "response_body_bytes": 155884
+    },
+    {
+      "operation": "final_health",
+      "status": 200,
+      "http_version": "HTTP/1.1",
+      "client_ms": 110.928,
+      "request_body_bytes": 0,
+      "response_body_bytes": 597
+    }
+  ],
+  "trials": [
+    {
+      "repetition": 1,
+      "batch_size": 42,
+      "ingest_requests": 4,
+      "client_ingest_ms": 30377.013,
+      "server_work_ms": 29604.65,
+      "max_numeric_difference": 0.0,
+      "request_body_bytes": 65162,
+      "response_body_bytes": 279
+    },
+    {
+      "repetition": 1,
+      "batch_size": 84,
+      "ingest_requests": 2,
+      "client_ingest_ms": 17964.981,
+      "server_work_ms": 17718.86,
+      "max_numeric_difference": 0.0,
+      "request_body_bytes": 65138,
+      "response_body_bytes": 139
+    },
+    {
+      "repetition": 1,
+      "batch_size": 168,
+      "ingest_requests": 1,
+      "client_ingest_ms": 12082.893,
+      "server_work_ms": 11896.95,
+      "max_numeric_difference": 0.0,
+      "request_body_bytes": 65126,
+      "response_body_bytes": 72
+    },
+    {
+      "repetition": 2,
+      "batch_size": 84,
+      "ingest_requests": 2,
+      "client_ingest_ms": 18211.298,
+      "server_work_ms": 17767.76,
+      "max_numeric_difference": 0.0,
+      "request_body_bytes": 65138,
+      "response_body_bytes": 140
+    },
+    {
+      "repetition": 2,
+      "batch_size": 168,
+      "ingest_requests": 1,
+      "client_ingest_ms": 11663.111,
+      "server_work_ms": 11308.85,
+      "max_numeric_difference": 0.0,
+      "request_body_bytes": 65126,
+      "response_body_bytes": 72
+    },
+    {
+      "repetition": 2,
+      "batch_size": 42,
+      "ingest_requests": 4,
+      "client_ingest_ms": 30176.167,
+      "server_work_ms": 29472.68,
+      "max_numeric_difference": 0.0,
+      "request_body_bytes": 65162,
+      "response_body_bytes": 278
+    },
+    {
+      "repetition": 3,
+      "batch_size": 168,
+      "ingest_requests": 1,
+      "client_ingest_ms": 11585.618,
+      "server_work_ms": 11381.46,
+      "max_numeric_difference": 0.0,
+      "request_body_bytes": 65126,
+      "response_body_bytes": 72
+    },
+    {
+      "repetition": 3,
+      "batch_size": 42,
+      "ingest_requests": 4,
+      "client_ingest_ms": 30244.347,
+      "server_work_ms": 29657.31,
+      "max_numeric_difference": 0.0,
+      "request_body_bytes": 65162,
+      "response_body_bytes": 279
+    },
+    {
+      "repetition": 3,
+      "batch_size": 84,
+      "ingest_requests": 2,
+      "client_ingest_ms": 18141.798,
+      "server_work_ms": 17780.89,
+      "max_numeric_difference": 0.0,
+      "request_body_bytes": 65138,
+      "response_body_bytes": 140
+    }
+  ],
+  "checks": [
+    {
+      "name": "batch_equivalence",
+      "passed": true,
+      "observation": "All 9 trials agree with full replay on IDs, labels, flags and seven numeric channels"
+    },
+    {
+      "name": "acknowledgement_ignored_then_retried",
+      "passed": true,
+      "observation": "0 inserts, 168 duplicates; stored outputs unchanged"
+    },
+    {
+      "name": "conflicting_event_id",
+      "passed": true,
+      "observation": "HTTP 409"
+    },
+    {
+      "name": "late_event",
+      "passed": true,
+      "observation": "HTTP 409; a new ID does not bypass chronological ordering"
+    },
+    {
+      "name": "reversed_batch",
+      "passed": true,
+      "observation": "HTTP 422"
+    },
+    {
+      "name": "rejections_are_atomic",
+      "passed": true,
+      "observation": "All committed outputs unchanged after conflict, late, reversed and invalid requests"
+    },
+    {
+      "name": "missing_token",
+      "passed": true,
+      "observation": "HTTP 401"
+    },
+    {
+      "name": "session_isolation",
+      "passed": true,
+      "observation": "Other session token receives HTTP 401; its own session is empty"
+    },
+    {
+      "name": "review_retry",
+      "passed": true,
+      "observation": "Duplicate acknowledged without another audit row"
+    },
+    {
+      "name": "conflicting_review_key",
+      "passed": true,
+      "observation": "HTTP 409"
+    },
+    {
+      "name": "audit_readback",
+      "passed": true,
+      "observation": "Exactly two revisions retained after duplicate and conflicting requests"
+    }
+  ],
+  "model_id": "91f67dfe56ef23644bd7aa12cc1e917e6faa844a7cbeedf1c536ace57086504e",
+  "input_sha256": "a5fce92b55ed9191e39ded4355ff1d5b37bd709e7b5c28289c521e22d82f0387",
+  "events_per_trial": 168,
+  "demo_outcomes": {
+    "baseline_alerts": 56,
+    "campaign_alerts": 48
+  },
+  "summary": [
+    {
+      "batch_size": 42,
+      "repetitions": 3,
+      "requests_per_trial": 4,
+      "client_ingest_ms": {
+        "median": 30244.347,
+        "min": 30176.167,
+        "max": 30377.013
+      },
+      "server_work_ms": {
+        "median": 29604.65,
+        "min": 29472.68,
+        "max": 29657.31
+      },
+      "request_body_bytes": {
+        "median": 65162,
+        "min": 65162,
+        "max": 65162
+      },
+      "response_body_bytes": {
+        "median": 279,
+        "min": 278,
+        "max": 279
+      }
+    },
+    {
+      "batch_size": 84,
+      "repetitions": 3,
+      "requests_per_trial": 2,
+      "client_ingest_ms": {
+        "median": 18141.798,
+        "min": 17964.981,
+        "max": 18211.298
+      },
+      "server_work_ms": {
+        "median": 17767.76,
+        "min": 17718.86,
+        "max": 17780.89
+      },
+      "request_body_bytes": {
+        "median": 65138,
+        "min": 65138,
+        "max": 65138
+      },
+      "response_body_bytes": {
+        "median": 140,
+        "min": 139,
+        "max": 140
+      }
+    },
+    {
+      "batch_size": 168,
+      "repetitions": 3,
+      "requests_per_trial": 1,
+      "client_ingest_ms": {
+        "median": 11663.111,
+        "min": 11585.618,
+        "max": 12082.893
+      },
+      "server_work_ms": {
+        "median": 11381.46,
+        "min": 11308.85,
+        "max": 11896.95
+      },
+      "request_body_bytes": {
+        "median": 65126,
+        "min": 65126,
+        "max": 65126
+      },
+      "response_body_bytes": {
+        "median": 72,
+        "min": 72,
+        "max": 72
+      }
+    }
+  ],
+  "finished_at_utc": "2026-09-08T19:30:00.471597+00:00"
+}

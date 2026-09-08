@@ -11,6 +11,15 @@ The user supplied `SentinelUEBA_Honeywell_Submission (2).zip` for assessment and
 
 ## Local changes during this review
 
+| Component | Attribution / scope |
+|---|---|
+| Original generator, features, model pipeline, trained artifacts, original report and evaluation | Supplied Induj Gupta MIT-licensed submission; not newly trained by this extension |
+| React usability and evidence/feedback changes | Current project extension with coding-assistant support |
+| FastAPI protocol, capability sessions, SQLite event/review transactions, live integration and public deployment | Current project extension with coding-assistant support |
+| HTTP networking experiments, CI socket integration, network evidence display, current academic and portfolio documentation | Current project extension with coding-assistant support; measurements produced by executing the published harness |
+
+The experiment JSON records its input hash, model/source identity, checkout revision and harness hash. Results belong to the specified environment and workload. Neither generated documentation nor a deployed demo establishes individual mastery; personal contribution statements must reflect the student's actual work and understanding.
+
 - Imported a usable project layout into the previously empty workspace.
 - Fixed the ES2021 TypeScript incompatibility caused by `Array.at`.
 - Documented the Node requirement and added a CI workflow for tests/builds.
