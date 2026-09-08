@@ -1,5 +1,16 @@
 # Public demo deployment
 
+## Academic/networking update — 9 September 2026
+
+- Source commit: `055e38aa0088d06f48d97bb359b14e97413866b9`; [CI passed](https://github.com/Harthik777/CN-Project/actions/runs/34269569143), including all 41 Python tests, a two-trial HTTP socket experiment with eleven correctness checks, and the frontend production build. The workflow retains its network-lab evidence artifact.
+- Render automatically deployed that commit after CI passed: deployment `dep-dag666btqb8s73advhgg` reported **Live**, with a duration of 1m18s. The plan remains Free. [Deployment record](https://dashboard.render.com/web/srv-dag5n9fqj5pc73931i8g/deploys/dep-dag666btqb8s73advhgg).
+- The public Render HTML includes the network evidence display, lab link and unavailable-session recovery. Verified size: 5,323,330 bytes; SHA-256 `2a9a5b102b5b5d49ca317b8fc0c5a5738262c472e4e4f6b02b99d403aeb9ef56`.
+- Pages artifact commit `97e2cd412844caeaab3e54ea0eb2a2743ccd78e9` [deployed successfully](https://github.com/Harthik777/CN-Project/actions/runs/34269583726). The public HTML matches the tested build exactly: 5,323,331 bytes; SHA-256 `a1f73f41b2d7e9990ab055d2dee308d91f5e3d04817d314997ef3340827d42d9`.
+- The temporary local experiment server was stopped before checking the final public build. Render health remained `ok` with the unchanged model/source identity below. The browser correctly explained that a previous cloud session had disappeared after deployment and offered a new session.
+- [RESULTS.md](RESULTS.md) publishes the nine-trial local and nine-trial Render networking experiments. [ACADEMIC_REPORT.md](ACADEMIC_REPORT.md) and [PORTFOLIO.md](PORTFOLIO.md) document the current coursework and résumé presentation.
+
+The records below preserve the initial deployments and older artifact hashes.
+
 ## Current deployment: Render — 9 September 2026
 
 - Full app: [SentinelUEBA on Render](https://sentinelueba-harthik.onrender.com/#live).

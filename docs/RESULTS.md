@@ -54,3 +54,5 @@ The demonstration flagged 56 of 120 intended-baseline events and all 48 staged c
 - The reports identify the pre-extension checkout revision; the then-uncommitted harness is identified by its content hash. This update changes client presentation, experiment tooling and documentation, while retaining the measured inference implementation and trained artifacts.
 
 The published JSON contains 42 POST requests per environment, plus GET requests, and no session tokens. Follow [NETWORK_LAB.md](NETWORK_LAB.md#reproduce-locally-at-no-hosting-cost) to rerun. GitHub Actions additionally executes a shorter two-trial experiment against a real loopback HTTP server and uploads evidence for each workflow run. The deployed service remains on Render Free; its storage and idle behaviour are documented in [PUBLIC_DEPLOYMENT.md](PUBLIC_DEPLOYMENT.md).
+
+The [clean Linux CI run for this update](https://github.com/Harthik777/CN-Project/actions/runs/34269569143) passed all 41 tests, both HTTP trials, all eleven correctness checks and the frontend build. Its downloaded experiment artifact reports the same model/source identity as the local and public-cloud runs.
