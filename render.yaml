@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: sentinelueba-harthik
+    runtime: docker
+    repo: https://github.com/Harthik777/CN-Project
+    branch: codex/full-stack
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: "7860"
+      - key: SENTINEL_ALLOWED_ORIGINS
+        value: https://harthik777.github.io
+      - key: SENTINEL_STORAGE_LABEL
+        value: "Render Free temporary disk. Sessions may be lost when the service sleeps, restarts or redeploys; export evidence before leaving. Maximum session lifetime: 24 hours."

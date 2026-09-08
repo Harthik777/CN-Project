@@ -1,3 +1,11 @@
+FROM node:24-bookworm-slim AS frontend-build
+WORKDIR /build
+COPY frontend/package.json frontend/package-lock.json ./frontend/
+RUN cd frontend && npm ci
+COPY frontend ./frontend
+COPY assets/dashboard_data.json ./assets/dashboard_data.json
+RUN cd frontend && npm run build
+
 FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1 \
     OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 HOME=/home/app \
@@ -13,7 +21,7 @@ COPY --chown=app:app config.py ./
 COPY --chown=app:app src ./src
 COPY --chown=app:app backend ./backend
 COPY --chown=app:app artifacts/model_bundle.joblib artifacts/autoencoder.pt artifacts/sequence_autoencoder.pt ./artifacts/
-COPY --chown=app:app assets/SentinelUEBA-React-Console.html ./assets/SentinelUEBA-React-Console.html
+COPY --from=frontend-build --chown=app:app /build/assets/SentinelUEBA-React-Console.html ./assets/SentinelUEBA-React-Console.html
 RUN mkdir -p /home/app/state && chown -R app:app /home/app
 USER app
 EXPOSE 7860
