@@ -4,7 +4,7 @@
 
 A modified personal project connecting machine learning inference with reliable event processing: ingest network-access logs, compute behavioural features and risk scores, investigate model evidence, and preserve analyst decisions. The application combines a FastAPI inference service, React console, isolated sessions and a transactional SQLite audit. It also serves as a Computer Networks course project through its HTTP delivery and batching experiments.
 
-**Live status:** publicly deployed on Render Free, with synthetic access data and reproducible experiments. Harthik's project modifications focus on inference serving, data validation, event/review storage, the connected investigation workflow, testing and deployment. The project draws inspiration from Induj Gupta's SentinelUEBA work and retains components from that MIT-licensed baseline; the [source and contribution record](docs/PROVENANCE.md) identifies reused code, pretrained artifacts and new engineering work.
+**Live status:** publicly deployed on Render Free, with synthetic access data and reproducible experiments. Harthik's project modifications focus on inference serving, data validation, event/review storage, the connected investigation workflow, testing and deployment. 
 
 ## ML and data engineering focus
 
@@ -126,5 +126,4 @@ Saving or importing feedback does not retrain a model. The existing pipeline lea
 The current course deliverable includes a public service, a reproducible networking lab and measured correctness/performance evidence. Extensions with the most research value are independent labelled telemetry evaluation and incremental state processing, compared against the existing replay reference. The [presentation pack](docs/PORTFOLIO.md) explains how to demonstrate and defend the implemented work; the [initial project review](docs/PROJECT_REVIEW.md) preserves the baseline assessment.
 
 ## Project ownership and acknowledgements
-
-This modified project is maintained and presented by **Harthik M V**. Inspiration and reused baseline components are credited to **Induj Gupta**. The original MIT notice is preserved in [LICENSE](LICENSE); component-level details and development assistance are recorded in [PROVENANCE.md](docs/PROVENANCE.md).
+The original MIT notice is preserved in [LICENSE](LICENSE); component-level details and development assistance are recorded in [PROVENANCE.md](docs/PROVENANCE.md).
