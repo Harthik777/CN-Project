@@ -1,0 +1,112 @@
+{
+  "origin": "https://sentinelueba-harthik.onrender.com",
+  "verified_at": "2026-09-09T03:04:15.015231+00:00",
+  "checks": [
+    {
+      "name": "sample_sha256",
+      "passed": true
+    },
+    {
+      "name": "model_identity",
+      "passed": true
+    },
+    {
+      "name": "capture_saved",
+      "passed": true
+    },
+    {
+      "name": "independent_packet_counts",
+      "passed": true
+    },
+    {
+      "name": "independent_ip_byte_total",
+      "passed": true
+    },
+    {
+      "name": "independent_bidirectional_flow_counts",
+      "passed": true
+    },
+    {
+      "name": "independent_packet_header_preview",
+      "passed": true
+    },
+    {
+      "name": "independent_flow_payload_totals",
+      "passed": true
+    },
+    {
+      "name": "idempotent_capture_retry",
+      "passed": true
+    },
+    {
+      "name": "missing_token_rejected",
+      "passed": true
+    },
+    {
+      "name": "cross_session_token_rejected",
+      "passed": true
+    },
+    {
+      "name": "malformed_capture_rejected",
+      "passed": true
+    },
+    {
+      "name": "invalid_capture_no_commit",
+      "passed": true
+    },
+    {
+      "name": "conflicting_capture_rejected",
+      "passed": true
+    },
+    {
+      "name": "saved_report_unchanged",
+      "passed": true
+    }
+  ],
+  "upload_http_ms": 952.595,
+  "capture_sha256": "5beca5ffe2612b362eea17ccc756237f18f9148110734eb1e7bc76606f322169",
+  "model_id": "98feff1193f3da62619ea86de2d20e2bfbd1a952a3b344743eafa789ace14677",
+  "summary": {
+    "analysis_ms": 87.313,
+    "capture_sha256": "5beca5ffe2612b362eea17ccc756237f18f9148110734eb1e7bc76606f322169",
+    "captured_bytes": 162891,
+    "completed_handshakes": 22,
+    "duration_ms": 56083.6339,
+    "end_utc": "2026-09-12T14:00:56.281184+00:00",
+    "file_bytes": 168963,
+    "flagged_flows": 11,
+    "flow_definition": "Bidirectional five-tuple, 60-second idle timeout; new TCP SYN sequence starts a new flow",
+    "flows": 32,
+    "format": "pcap",
+    "ip_versions": {
+      "4": 320,
+      "6": 58
+    },
+    "link_type": "Ethernet",
+    "original_record_bytes": 162891,
+    "out_of_order_records": 0,
+    "packet_records": 378,
+    "parsed_packets": 378,
+    "protocols": {
+      "TCP": 246,
+      "UDP": 132
+    },
+    "skipped_by_reason": {},
+    "skipped_packets": 0,
+    "start_utc": "2026-09-12T14:00:00.197550+00:00",
+    "timestamp_resolution": "microseconds",
+    "total_ip_bytes": 157599
+  },
+  "independent_decoder": "dpkt 1.9.8",
+  "synthetic_test_metrics": {
+    "true_positive": 64,
+    "false_positive": 13,
+    "false_negative": 0,
+    "true_negative": 179,
+    "precision": 0.8311688311688312,
+    "recall": 1.0,
+    "f1": 0.9078014184397163,
+    "average_precision": 0.9893664189234775,
+    "false_positive_rate": 0.06770833333333333
+  }
+}
