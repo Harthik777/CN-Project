@@ -1,0 +1,49 @@
+name: Verify public packet deployment
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-packets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install httpx==0.28.1 dpkt==1.9.8
+      - name: Wait for the expected flow pipeline on Render
+        shell: bash
+        run: |
+          mkdir -p output
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          digest = hashlib.sha256()
+          for name in ('artifacts/packet_flow/flow_model.joblib', 'artifacts/packet_flow/flow_model.json', 'backend/packets.py', 'backend/flow_model.py'):
+              path = Path(name)
+              digest.update(path.name.encode())
+              digest.update(path.read_bytes())
+          Path('output/expected-flow-id.txt').write_text(digest.hexdigest())
+          PY
+          ready=0
+          for attempt in {1..30}; do
+            curl --fail --silent --show-error --connect-timeout 5 --max-time 15 https://sentinelueba-harthik.onrender.com/api/health > output/public-health.json || true
+            if python -c "import json,pathlib; assert json.loads(pathlib.Path('output/public-health.json').read_text()).get('flow_model_id') == pathlib.Path('output/expected-flow-id.txt').read_text()" 2>/dev/null; then
+              ready=1
+              break
+            fi
+            sleep 8
+          done
+          test "$ready" = 1
+      - name: Verify public upload, independent decoding and saved results
+        run: python scripts/packet_lab.py --url https://sentinelueba-harthik.onrender.com --output output/packet-render.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-packet-evidence
+          path: |
+            output/packet-render.json
+            output/public-health.json
+            output/expected-flow-id.txt
