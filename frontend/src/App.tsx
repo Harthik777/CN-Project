@@ -1624,7 +1624,7 @@ export default function App() {
           <div className="command-actions">
             <span className="system-state">
               <StatusDot />
-              {view === "packets" ? "Browser + API" : view === "live" ? "Server inference" : "Replay"}
+              {view === "packets" ? "Browser ready" : view === "live" ? "Server inference" : "Replay"}
             </span>
             <span className="time-range">
               <CalendarDays size={15} />

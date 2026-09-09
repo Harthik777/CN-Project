@@ -2,6 +2,8 @@
 
 Use **https://harthik777.github.io/CN-Project/#packets** as the primary project link. Render remains the optional packet SQL backend and the required access-log inference backend. This release adds actual browser packet inference, not prerecorded results presented as live inference.
 
+Packet analysis starts in **Browser only: no upload** mode on every page load. The bundled synthetic capture is stored with the application, and its packet features and model scores are computed when you run it. Automatic mode is an explicit choice for an optional server save. The packet page also links directly to the bundled, precomputed synthetic access-log benchmark replay. A real capture can be selected for browser analysis, but this does not change the model's synthetic training and evaluation provenance.
+
 ## What happens during an outage
 
 | Operation | Behavior |
