@@ -4,7 +4,7 @@
 
 A modified personal project connecting Computer Networks, machine learning and data engineering. Upload a packet capture, decode IPv4/IPv6 TCP/UDP headers, reconstruct bidirectional flows, inspect matching TCP handshakes, and score 13 flow features with a separately trained Isolation Forest. A second pipeline ingests network-access logs, computes behavioural risk scores and preserves analyst decisions. Both pipelines use FastAPI, React, isolated sessions and transactional SQLite storage.
 
-**Live status:** publicly deployed on Render Free, with a downloadable synthetic packet capture, synthetic access data and reproducible experiments. Harthik's modifications include packet parsing, flow-model training and evaluation, inference serving, data validation, transactional storage, testing and deployment. The project draws inspiration from Induj Gupta's SentinelUEBA work and retains components from that MIT-licensed baseline; the [source and contribution record](docs/PROVENANCE.md) identifies reused code, pretrained artifacts and new engineering work.
+**Live status:** publicly deployed on Render Free, with a downloadable synthetic packet capture, synthetic access data and reproducible experiments. Harthik's modifications include packet parsing, flow-model training and evaluation, inference serving, data validation, transactional storage, testing and deployment.
 
 ## ML and data engineering focus
 
@@ -133,5 +133,4 @@ Saving or importing feedback does not retrain a model. The existing pipeline lea
 The current course deliverable includes a public service, a reproducible networking lab and measured correctness/performance evidence. Extensions with the most research value are independent labelled telemetry evaluation and incremental state processing, compared against the existing replay reference. The [presentation pack](docs/PORTFOLIO.md) explains how to demonstrate and defend the implemented work; the [initial project review](docs/PROJECT_REVIEW.md) preserves the baseline assessment.
 
 ## Project ownership and acknowledgements
-
-This modified project is maintained and presented by **Harthik M V**. Inspiration and reused baseline components are credited to **Induj Gupta**. The original MIT notice is preserved in [LICENSE](LICENSE); component-level details and development assistance are recorded in [PROVENANCE.md](docs/PROVENANCE.md).
+Retained-component notices are preserved in [THIRD_PARTY_NOTICES.md](docs/THIRD_PARTY_NOTICES.md); component-level details and development assistance are recorded in [PROVENANCE.md](docs/PROVENANCE.md).

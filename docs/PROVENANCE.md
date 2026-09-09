@@ -8,7 +8,7 @@ This repository is Harthik's modified SentinelUEBA project. Its engineering focu
 
 ## Inspiration and retained components
 
-Induj Gupta's SentinelUEBA work provided inspiration for this project. The repository also retains source components, pretrained model files and evaluation artifacts from that MIT-licensed baseline. The current application, modifications and experiments are recorded separately below. The original copyright/license notice remains in [LICENSE](../LICENSE).
+Induj Gupta's SentinelUEBA work provided inspiration for this project. The repository also retains source components, pretrained model files and evaluation artifacts from that MIT-licensed baseline. The current application, modifications and experiments are recorded separately below. The retained components' copyright/license notice is reproduced in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 The baseline archive `SentinelUEBA_Honeywell_Submission (2).zip` was supplied on 8 September 2026. Its traceability record is:
 
@@ -17,7 +17,7 @@ The baseline archive `SentinelUEBA_Honeywell_Submission (2).zip` was supplied on
 - All 85 file hashes listed in the supplied submission manifest matched at inspection. All listed run-manifest source and artifact hashes also matched the supplied source.
 - The archive contains a duplicate nested submission: 86 nested files match their outer counterparts. This working copy uses the outer runnable project and omits Python bytecode caches.
 - `artifacts/run_manifest.json` records the original training run. Its source hashes describe that baseline, not the edited workspace. Original evaluation evidence and documents are preserved in `docs/original_submission/`.
-- Original trained weights, evaluation metrics and scored replay are retained. They are separate from the new HTTP experiments; no new training run or independently reproduced cross-seed evaluation is claimed.
+- Original UEBA trained weights, evaluation metrics and scored replay are retained. They are separate from the new HTTP experiments and packet-flow model; no new UEBA training run or independently reproduced UEBA cross-seed evaluation is claimed.
 
 ## Modifications in Harthik's project
 
