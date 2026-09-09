@@ -1,5 +1,16 @@
 # Public demo deployment
 
+## Browser-only default: 10 September 2026
+
+The [primary Pages demo](https://harthik777.github.io/CN-Project/#packets) now starts in **Browser only: no upload** mode on every page load. The existing synthetic PCAP and trained model are bundled in the page; parsing and scoring happen on the device. A direct link opens the stored synthetic access-log benchmark replay, explicitly identified as precomputed output. Real PCAPs can also be analyzed in the browser within the documented limits; the model still has synthetic training/evaluation provenance.
+
+- Source commit `ebf0aef7e49dafe5fa48ad6d200be9918676345c`; [source verification](https://github.com/Harthik777/CN-Project/actions/runs/34398324644).
+- Pages commit `162aba5bbfcb876acfa8b3c2125e058c6814a5c1`; [deployment passed](https://github.com/Harthik777/CN-Project/actions/runs/34398330435). Anonymous HTTPS download matched the built artifact exactly: 6,127,472 bytes, SHA-256 `3fbeb0e7cc8032b451cb6c6fc01b6f540fa1f1ae27a529ca39845bba6bac0658`.
+- Browser verification confirmed the default after a public-page reload and computed fresh sample results without upload: 378 packets, 32 flows, 22 matching handshakes and 11 flags. The stored replay link opened successfully in the local production build; public browser console errors were absent. Frontend production build and five resilience tests passed locally.
+- [Offline HTML release v4.1.1](https://github.com/Harthik777/CN-Project/releases/tag/v4.1.1) includes the new default. Render's API remains version 4.1.0; no backend change or redeployment was needed for this presentation update.
+
+At the follow-up check, Render's dashboard marked the last deployment Live, while a direct health request from the development computer timed out. No failed Render deployment was visible in the inspected history. The earlier failed GitHub public-verification run remains historical; it was followed by the successful v4.1.0 verification below. The Pages demonstration no longer attempts that connection by default.
+
 ## Dependability release: 10 September 2026
 
 **Primary demo:** [SentinelUEBA Packet analysis on GitHub Pages](https://harthik777.github.io/CN-Project/#packets). **Presentation download:** [v4.1.0 release and offline HTML](https://github.com/Harthik777/CN-Project/releases/tag/v4.1.0).
