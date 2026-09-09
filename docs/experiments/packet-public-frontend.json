@@ -1,0 +1,19 @@
+{
+  "verified_at": "2026-09-09T03:06:25.329175+00:00",
+  "artifacts": [
+    {
+      "url": "https://sentinelueba-harthik.onrender.com/",
+      "bytes": 5340150,
+      "sha256": "26ba102116befd7f6bf39339ed10074c8d49d00c9265255fe169088bade44a04",
+      "packet_ui_present": true
+    },
+    {
+      "url": "https://harthik777.github.io/CN-Project/",
+      "bytes": 5340232,
+      "sha256": "b05da3b3523c62a4e18c05e5dca3f9655d01ce3addd644e4b6319dda8c3447be",
+      "packet_ui_present": true,
+      "matches_packaged_frontend": true
+    }
+  ],
+  "pages_upload_preflight_passed": true
+}

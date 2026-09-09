@@ -2,7 +2,7 @@
 
 ## Packet analysis extension
 
-The [packet lab](PACKET_LAB.md) documents the separate PCAP-to-flow pipeline and its synthetic ML evaluation. The public sample contains **378 packets, 32 bidirectional flows, 22 matching TCP handshakes and 157,599 IP bytes**. Independent dpkt decoding agrees with packet counts, protocol totals, flow groupings, preview headers and payload lengths. The [local HTTP evidence](experiments/packet-local.json) records all 15 successful checks. Public deployment evidence is recorded after release verification in [PUBLIC_DEPLOYMENT.md](PUBLIC_DEPLOYMENT.md).
+The [packet lab](PACKET_LAB.md) documents the separate PCAP-to-flow pipeline and its synthetic ML evaluation. The public sample contains **378 packets, 32 bidirectional flows, 22 matching TCP handshakes and 157,599 IP bytes**. Independent dpkt decoding agrees with packet counts, protocol totals, flow groupings, preview headers and payload lengths. Both the [local HTTP evidence](experiments/packet-local.json) and [public Render HTTP evidence](experiments/packet-render.json) record all 15 successful checks. Public frontend and release verification are recorded in [PUBLIC_DEPLOYMENT.md](PUBLIC_DEPLOYMENT.md).
 
 The flow model's capture-disjoint test has 64 true positives, 13 false positives, 179 true negatives and 0 false negatives across 256 generated flows. Precision is 83.12%, recall 100%, F1 0.9078 and benign false-positive rate 6.77%. Training uses 480 benign flows; a separate 192-flow validation split determines the threshold. This is a controlled synthetic evaluation, not operational attack-detection performance. See [the model manifest](../artifacts/packet_flow/flow_model.json).
 

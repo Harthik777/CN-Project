@@ -1,6 +1,6 @@
 {
   "origin": "https://sentinelueba-harthik.onrender.com",
-  "verified_at": "2026-09-09T03:04:15.015231+00:00",
+  "verified_at": "2026-09-09T03:06:18.696594+00:00",
   "checks": [
     {
       "name": "sample_sha256",
@@ -63,11 +63,11 @@
       "passed": true
     }
   ],
-  "upload_http_ms": 952.595,
+  "upload_http_ms": 514.945,
   "capture_sha256": "5beca5ffe2612b362eea17ccc756237f18f9148110734eb1e7bc76606f322169",
   "model_id": "98feff1193f3da62619ea86de2d20e2bfbd1a952a3b344743eafa789ace14677",
   "summary": {
-    "analysis_ms": 87.313,
+    "analysis_ms": 24.001,
     "capture_sha256": "5beca5ffe2612b362eea17ccc756237f18f9148110734eb1e7bc76606f322169",
     "captured_bytes": 162891,
     "completed_handshakes": 22,

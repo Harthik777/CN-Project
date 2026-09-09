@@ -1,5 +1,20 @@
 # Public demo deployment
 
+## Packet analysis release: 9 September 2026
+
+**Public packet lab:** [Open SentinelUEBA Packet analysis](https://sentinelueba-harthik.onrender.com/#packets). The default hosted view now opens Packet analysis; the original access-log console remains at `#live`.
+
+- Implementation commit `22c8131` was merged with the newer GitHub presentation edits in release commit `cb9aff23cf094e7c10f2f360aa1508cb4a843c5c`. [Release CI passed](https://github.com/Harthik777/CN-Project/actions/runs/34305492797): 66 Python tests, frontend production build, the original HTTP socket lab and the new 15-check packet HTTP lab.
+- Render serves API version **4.0.0**, with flow-model/extractor identity `98feff1193f3da62619ea86de2d20e2bfbd1a952a3b344743eafa789ace14677`. The original UEBA model/source identity remains `91f67dfe56ef23644bd7aa12cc1e917e6faa844a7cbeedf1c536ace57086504e`.
+- [Independent public release verification passed](https://github.com/Harthik777/CN-Project/actions/runs/34305800529). It waited for the expected model identity, uploaded the public sample to Render, independently decoded the same bytes with dpkt, compared packet/flow/header statistics, verified saved results and idempotent retries, rejected cross-session access and invalid/conflicting uploads, and checked both frontend artifacts and the Pages upload CORS preflight. All 15 packet HTTP checks passed. The raw [Render packet evidence](experiments/packet-render.json) and [frontend evidence](experiments/packet-public-frontend.json) are retained.
+- Render's public HTML is **5,340,150 bytes**, SHA-256 `26ba102116befd7f6bf39339ed10074c8d49d00c9265255fe169088bade44a04`, with the new packet-analysis controls present.
+- Pages artifact commit `85243274e96c8d66efa6352d56e0a5fad01e5d40` [deployed successfully](https://github.com/Harthik777/CN-Project/actions/runs/34305509839). Its **5,340,232-byte** public HTML matches the packaged release build exactly; SHA-256 `b05da3b3523c62a4e18c05e5dca3f9655d01ce3addd644e4b6319dda8c3447be`.
+- Local browser verification exercised the sample button, actual file-chooser upload, a matching TCP handshake, saved-report reload and both exports. The exported CSV and JSON each contain 32 flows representing 378 packets, without session credentials. Browser console errors were absent. The public sample has 22 matching handshakes and 157,599 IP bytes.
+
+Direct connections from the development computer to Render (including Render's dashboard) timed out during release verification. The public service was therefore checked from GitHub's hosted runner, which successfully reached it over verified HTTPS. No local-network, DNS or firewall settings were changed. A Render dashboard deployment ID was not retrieved for this release; the recorded public API/model identity and HTTP/frontend evidence establish what is serving.
+
+The existing Free service and temporary-storage constraints remain. The packet module adds no paid service, active sniffing or local-computer dependency. The model is evaluated only on generated captures; the [packet lab](PACKET_LAB.md) records that limitation and the supported capture formats.
+
 ## Harthik's ML/Data Engineering presentation — 9 September 2026
 
 The public application now identifies **Harthik M V — Aspiring Machine Learning Engineer / Data Engineer** in the page title, project badge and live introduction. The README, academic report and portfolio pack describe Harthik's modified project, with separate ML Engineer and Data Engineer résumé versions. Inspiration and retained components remain documented in the provenance record and original MIT notice.
