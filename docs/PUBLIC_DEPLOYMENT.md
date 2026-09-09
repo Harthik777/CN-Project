@@ -1,5 +1,22 @@
 # Public demo deployment
 
+## Dependability release: 10 September 2026
+
+**Primary demo:** [SentinelUEBA Packet analysis on GitHub Pages](https://harthik777.github.io/CN-Project/#packets). **Presentation download:** [v4.1.0 release and offline HTML](https://github.com/Harthik777/CN-Project/releases/tag/v4.1.0).
+
+Packet parsing, flow extraction and trained Isolation Forest scoring now run in the browser before any optional server request. The application caches its public page for offline reload, retains clearly labeled result copies, offers a self-contained HTML download, and bounds network waits without automatically repeating writes. See [DEPENDABILITY.md](DEPENDABILITY.md) for behavior, retention and remaining limits.
+
+- Source commit `bcc4f9cdb2603a8b770189ea8800dde4c967e3c1` passed [source CI](https://github.com/Harthik777/CN-Project/actions/runs/34394090370): 67 Python tests, 5 JavaScript resilience tests, frontend build, network labs, and Python/browser comparisons over 130 captures and 1,050 flows. Flags matched; maximum measured score difference was `1.1102230246251565e-16`.
+- Render deployment `dep-dagr3pafngtc73aueee0` reported **Deploy succeeded | Live** on the existing Free service. [Deployment record](https://dashboard.render.com/web/srv-dag5n9fqj5pc73931i8g/deploys/dep-dagr3pafngtc73aueee0). The public API returns **4.1.0**, health uptime and the unchanged model identities. Its HTML is 6,126,905 bytes, SHA-256 `e11bb53953970b115744a3d7657a180a801ccd654c5c3954f07520f545c0f19b`.
+- Pages artifact commit `f809be4ed0a4da543721d3005c5c7293f46bad17` [deployed successfully](https://github.com/Harthik777/CN-Project/actions/runs/34394096803). Its 6,126,987-byte HTML matches the packaged download exactly; SHA-256 `2b1505d1e3d2794029453ec126f12f1b028c7db039f89541b7266d4771c6fb7e`.
+- [Independent public verification passed](https://github.com/Harthik777/CN-Project/actions/runs/34394826305): expected API version and model identity, all 15 packet HTTP checks, both published frontends, offline workers and Pages upload CORS. Raw [packet evidence](experiments/packet-render-4.1.0.json), [frontend evidence](experiments/public-frontend-4.1.0.json) and [health response](experiments/public-health-4.1.0.json) are retained.
+- A real local server-stop exercise verified offline page reload, a retained 120-event read-only access-log result, and analysis/export/reload of a different uploaded PCAP with 378 packets, 32 flows and 9 flags matching Python. The final download was retrieved from the page cache with the host stopped. The automated browser environment blocked direct `file:` navigation, so direct opening of the downloaded HTML was not browser-verified there.
+- Public browser verification on Pages displayed the local result immediately, then confirmed SQL save and readback from Render 4.1.0. The public sample has 378 packets, 32 flows, 22 matched handshakes and 11 flags.
+
+The first public verification attempt ran before source CI completed and timed out waiting for 4.1.0 while Render still served 4.0.0. Render had not started an automatic deployment. After confirming source CI passed, the tested commit was deployed manually and the public verification above passed. For future releases, wait for source CI and Render deployment before dispatching the public verification workflow. A post-deployment check should not be started while the provider is still waiting for commit checks. Render's [deployment documentation](https://render.com/docs/deploys#integrating-with-ci) states that this mode waits for all checks. Documentation-only evidence commits use `[skip render]` to avoid an unnecessary service restart.
+
+No paid hosting, second backend, keep-alive automation or local-server dependency was added. New access-log inference and cloud SQL writes still require Render; browser packet analysis remains usable during a backend outage. Offline page caching requires an initial successful visit, and browser storage can be evicted. These checks establish demonstrated recovery behavior, not guaranteed uptime or operational detection accuracy.
+
 ## Packet analysis release: 9 September 2026
 
 **Public packet lab:** [Open SentinelUEBA Packet analysis](https://sentinelueba-harthik.onrender.com/#packets). The default hosted view now opens Packet analysis; the original access-log console remains at `#live`.
