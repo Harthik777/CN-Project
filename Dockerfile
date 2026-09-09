@@ -21,6 +21,7 @@ COPY --chown=app:app config.py ./
 COPY --chown=app:app src ./src
 COPY --chown=app:app backend ./backend
 COPY --chown=app:app artifacts/model_bundle.joblib artifacts/autoencoder.pt artifacts/sequence_autoencoder.pt ./artifacts/
+COPY --chown=app:app artifacts/packet_flow ./artifacts/packet_flow
 COPY --from=frontend-build --chown=app:app /build/assets/SentinelUEBA-React-Console.html ./assets/SentinelUEBA-React-Console.html
 RUN mkdir -p /home/app/state && chown -R app:app /home/app
 USER app

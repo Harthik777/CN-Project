@@ -7,3 +7,4 @@ assets/*.html -text
 *.pdf binary
 *.pptx binary
 *.png binary
+*.pcap binary

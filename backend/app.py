@@ -18,6 +18,8 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from backend.schemas import Batch, Feedback, NewSession
 from backend.scenarios import scenarios
 from backend.store import MAX_EVENTS, Store
+from backend.flow_model import ARTIFACTS, FlowScorer
+from backend.packets import CaptureError, MAX_CAPTURE_BYTES, MAX_FLOWS, MAX_PACKETS
 
 ROOT = Path(__file__).resolve().parent.parent
 log = logging.getLogger("sentinel.api")
@@ -58,9 +60,10 @@ def create_app(db_path=None, scorer=None):
     @asynccontextmanager
     async def lifespan(app):
         app.state.scorer = scorer or ModelScorer()
+        app.state.flow_scorer = FlowScorer()
         yield
 
-    app = FastAPI(title="SentinelUEBA Live Replay API", version="3.0.0", lifespan=lifespan,
+    app = FastAPI(title="SentinelUEBA Network Analytics API", version="4.0.0", lifespan=lifespan,
                   description="Real model inference on bounded chronological replays. Synthetic demonstration inputs; no production detection claims.")
     app.state.store = store
     bearer = HTTPBearer(auto_error=False)
@@ -110,7 +113,9 @@ def create_app(db_path=None, scorer=None):
         model = app.state.scorer
         with store.connect() as db:
             db.execute("SELECT 1").fetchone()
-        return {"status": "ok", "version": "3.0.0", "model_id": model.model_id,
+        return {"status": "ok", "version": "4.0.0", "model_id": model.model_id,
+                "flow_model_id": app.state.flow_scorer.model_id,
+                "packet_analysis": {"format": "classic pcap", "max_bytes": MAX_CAPTURE_BYTES, "max_packets": MAX_PACKETS, "max_flows": MAX_FLOWS},
                 "thresholds": model.thresholds, "max_events": MAX_EVENTS,
                 "storage": os.getenv("SENTINEL_STORAGE_LABEL", "SQLite on host disk; 24-hour demo sessions"),
                 "inference": "saved models, past-only features, chronological event-log replay",
@@ -143,6 +148,34 @@ def create_app(db_path=None, scorer=None):
     @app.post("/api/sessions/{sid}/feedback")
     def feedback(sid: str, body: Feedback, credential: str = Depends(token)):
         return store.save_feedback(sid, credential, body.model_dump())
+
+    @app.get("/api/packets/sample")
+    def packet_sample():
+        return FileResponse(ARTIFACTS / "sample_capture.pcap", media_type="application/vnd.tcpdump.pcap",
+                            filename="sentinel-synthetic-sample.pcap")
+
+    @app.get("/api/packets/model")
+    def packet_model():
+        return dict(app.state.flow_scorer.metadata, model_id=app.state.flow_scorer.model_id)
+
+    @app.post("/api/sessions/{sid}/capture", openapi_extra={"requestBody": {"required": True,
+        "content": {"application/vnd.tcpdump.pcap": {"schema": {"type": "string", "format": "binary"}}}}})
+    async def upload_capture(sid: str, request: Request, credential: str = Depends(token)):
+        from starlette.concurrency import run_in_threadpool
+        data = await request.body()
+        try:
+            return await run_in_threadpool(store.analyze_capture, sid, credential, data, app.state.flow_scorer)
+        except CaptureError as exc:
+            raise HTTPException(422, str(exc))
+        except HTTPException:
+            raise
+        except Exception:
+            log.exception("Capture analysis failed; transaction rolled back")
+            raise HTTPException(503, "Capture analysis failed; no result was committed")
+
+    @app.get("/api/sessions/{sid}/capture")
+    def saved_capture(sid: str, credential: str = Depends(token)):
+        return store.capture_snapshot(sid, credential)
 
     @app.get("/")
     def index():

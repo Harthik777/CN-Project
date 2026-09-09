@@ -5,7 +5,7 @@ export type PolicyKey =
   | "top_5pct";
 
 export type Severity = "critical" | "high" | "review";
-export type ViewName = "alerts" | "topology" | "evaluation" | "live";
+export type ViewName = "alerts" | "topology" | "evaluation" | "live" | "packets";
 
 export interface AlertRecord {
   id: number;

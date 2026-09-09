@@ -60,6 +60,7 @@ import {
 import dashboardData from "./data/dashboard-data.json";
 import TopologyView from "./TopologyView";
 import LiveConsole from "./LiveConsole";
+import PacketConsole from "./PacketConsole";
 import type {
   AlertRecord,
   DashboardData,
@@ -1518,7 +1519,11 @@ function ModelAudit() {
 }
 
 export default function App() {
-  const [view, setView] = useState<ViewName>(import.meta.env.VITE_API_BASE || window.location.hash === "#live" ? "live" : "alerts");
+  const [view, setView] = useState<ViewName>(() => {
+    const hash = window.location.hash.slice(1);
+    return ["alerts", "topology", "evaluation", "live", "packets"].includes(hash) ? hash as ViewName : window.location.protocol === "file:" ? "alerts" : "packets";
+  });
+  useEffect(() => { window.history.replaceState(null, "", `#${view}`); }, [view]);
   const [policy, setPolicy] = useState<PolicyKey>("top_2pct");
   const [globalSearch, setGlobalSearch] = useState("");
   const [globalSearchDraft, setGlobalSearchDraft] = useState("");
@@ -1542,6 +1547,7 @@ export default function App() {
       <aside className="navigation-rail">
         <ProductMark />
         <nav aria-label="Primary navigation">
+          <RailButton label="Packet analysis" active={view === "packets"} onClick={() => setView("packets")}><Layers3 size={20}/></RailButton>
           <RailButton label="Live inference" active={view === "live"} onClick={() => setView("live")}><Radio size={20}/></RailButton>
           <RailButton
             label="Alert workspace"
@@ -1579,10 +1585,10 @@ export default function App() {
             <div>
               <div className="breadcrumb">
                 SentinelUEBA <span>/</span> Security Operations
-                <span className="environment-badge">{view === "live" ? "Live inference · demo" : "Synthetic replay"}</span>
+                <span className="environment-badge">{view === "packets" ? "Packet analysis · demo" : view === "live" ? "Live inference · demo" : "Synthetic replay"}</span>
               </div>
               <h1>
-                {view === "live" ? "Live investigation" : view === "alerts"
+                {view === "packets" ? "Network packet lab" : view === "live" ? "Live investigation" : view === "alerts"
                   ? "Threat operations"
                   : view === "topology"
                     ? "Entity intelligence"
@@ -1591,7 +1597,7 @@ export default function App() {
             </div>
           </div>
 
-          <form
+          {view !== "packets" && <form
             className="global-search"
             role="search"
             onSubmit={(event) => {
@@ -1608,16 +1614,16 @@ export default function App() {
               aria-label="Global search"
             />
             <kbd>Enter</kbd>
-          </form>
+          </form>}
 
           <div className="command-actions">
             <span className="system-state">
               <StatusDot />
-              {view === "live" ? "Live API" : "Replay"}
+              {view === "live" || view === "packets" ? "Live API" : "Replay"}
             </span>
             <span className="time-range">
               <CalendarDays size={15} />
-              {view === "live" ? "Isolated demo session" : "14-day replay"}
+              {view === "live" || view === "packets" ? "Isolated demo session" : "14-day replay"}
             </span>
             <button
               type="button"
@@ -1628,7 +1634,7 @@ export default function App() {
             >
               <RotateCw size={16} />
             </button>
-            <button
+            {view !== "packets" && <button
               type="button"
               className="notification-button"
               aria-label="Alert notifications"
@@ -1636,7 +1642,7 @@ export default function App() {
             >
               <BellRing size={17} />
               <span>{DATA.operating_points[policy].n_flagged}</span>
-            </button>
+            </button>}
             <span className="profile-badge" title="Harthik M V · Aspiring Machine Learning Engineer / Data Engineer" aria-label="Project by Harthik M V">
               HM
             </span>
@@ -1684,9 +1690,11 @@ export default function App() {
 
         {view === "evaluation" && <ModelAudit />}
         {view === "live" && <LiveConsole />}
+        {view === "packets" && <PacketConsole />}
       </div>
 
       <nav className="mobile-navigation" aria-label="Mobile navigation">
+        <button type="button" className={view === "packets" ? "active" : ""} onClick={() => setView("packets")}><Layers3 size={19}/>Packets</button>
         <button type="button" className={view === "live" ? "active" : ""} onClick={() => setView("live")}><Radio size={19}/>Live inference</button>
         <button
           type="button"

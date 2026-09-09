@@ -2,13 +2,21 @@
 
 **Modified project by Harthik M V** · Aspiring Machine Learning Engineer / Data Engineer
 
-Computer Networks course project · ML inference and reliable event processing · September 2026
+Computer Networks course project · Packet-to-flow ML and reliable event processing · September 2026
 
-[Public demonstration](https://sentinelueba-harthik.onrender.com/#live) · [Source](https://github.com/Harthik777/CN-Project) · [Experiment results](RESULTS.md)
+[Packet demonstration](https://sentinelueba-harthik.onrender.com/#packets) · [Access-log demonstration](https://sentinelueba-harthik.onrender.com/#live) · [Source](https://github.com/Harthik777/CN-Project) · [Experiment results](RESULTS.md)
 
 ## Abstract
 
-SentinelUEBA is Harthik M V's modified project combining machine learning inference and reliable event processing for network-access analytics. A React client sends validated event batches over HTTPS to a FastAPI service. The backend computes causal behavioural features, executes saved models, stores results in SQLite, and exposes source-IP evidence for investigation. The ML engineering focus is model integration, explainable serving and reproducibility; the data engineering focus is validation, chronology, duplicate handling and transactional audit history. As a Computer Networks course project, it evaluates application-level reliability and HTTP batching on identical workloads. The system is publicly deployed on a free hosting tier, with an offline benchmark console and a local API for rehearsals. Synthetic-data evaluation and temporary cloud storage bound its claims.
+SentinelUEBA is Harthik M V's modified project combining packet-level network analysis, machine learning and reliable data processing. Its PCAP pipeline decodes IPv4/IPv6 TCP/UDP headers, aggregates bidirectional flows and verifies matching TCP handshake evidence. Thirteen flow features feed a separately trained Isolation Forest; capture hashes, typed flow records and model identities are persisted transactionally in SQLite. A second pipeline serves pretrained UEBA models on validated chronological access logs. A React client connects both pipelines to FastAPI over HTTPS. Evaluation includes capture-disjoint synthetic model tests, independent packet decoding and application-level HTTP reliability experiments. The system is publicly deployed on a free hosting tier. Synthetic evaluation, bounded capture support and temporary cloud storage limit its claims.
+
+## Packet-level CN extension
+
+The [packet lab](PACKET_LAB.md) is the primary technical specification and viva guide for the core CN component. It covers PCAP record validation, network/transport header parsing, five-tuple grouping, sequence acknowledgements, timing definitions, skipped-packet accounting and unsupported cases. The implementation also adds SQL capture/flow tables, idempotent file ingestion, model versioning and exports.
+
+The public sample contains 378 packets, 32 flows and 22 matching TCP handshakes. A separate synthetic flow model was trained on 480 benign flows, thresholded on 192 validation flows and evaluated on 256 flows from different captures. The test confusion matrix is TP=64, FP=13, TN=179, FN=0, with precision 83.12% and benign false-positive rate 6.77%. These are generated-pattern results, not real-traffic attack-detection accuracy. The packaged sample uses a further seed and is excluded from all three model splits. Tests regenerate the held-out captures and reproduce the confusion matrix without refitting.
+
+There are 66 automated tests across the project, including 25 packet-parser, flow-model and capture-API tests. The packet HTTP lab adds 15 checks including independent dpkt agreement and saved-result consistency. The earlier access-log experiments below retain their original scope and timings.
 
 ## 1. Problem and objectives
 
@@ -20,7 +28,7 @@ The course objectives are to implement and evaluate: (1) a documented HTTP clien
 
 **Harthik M V's project modifications** include the HTTP inference API, transactional event/review storage, session capabilities, live React integration, feedback validation, deployment, regression checks and networking experiments. Together these connect the ML computation to a tested data-processing and investigation workflow. Development used coding-assistant support.
 
-The project was inspired by **Induj Gupta's SentinelUEBA work**. The current repository also retains its MIT-licensed generator and model-pipeline components, pretrained models and original evaluation artifacts. The benchmark metrics describe those retained artifacts; the HTTP experiments measure the modified application. See the [source and contribution record](PROVENANCE.md) for the component-level distinction. No new model-training run is claimed in this report.
+The project was inspired by **Induj Gupta's SentinelUEBA work**. The current repository retains its MIT-licensed access-log generator and model-pipeline components, pretrained UEBA models and original evaluation artifacts. Those access-log benchmark metrics describe the retained artifacts. The packet parser, generated PCAP corpus, flow-model training and flow evaluation are new work in this modified project. See the [source and contribution record](PROVENANCE.md) for the component-level distinction.
 
 ## 3. System design
 

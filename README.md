@@ -2,24 +2,25 @@
 
 **Harthik M V · Aspiring Machine Learning Engineer / Data Engineer**
 
-A modified personal project connecting machine learning inference with reliable event processing: ingest network-access logs, compute behavioural features and risk scores, investigate model evidence, and preserve analyst decisions. The application combines a FastAPI inference service, React console, isolated sessions and a transactional SQLite audit. It also serves as a Computer Networks course project through its HTTP delivery and batching experiments.
+A modified personal project connecting Computer Networks, machine learning and data engineering. Upload a packet capture, decode IPv4/IPv6 TCP/UDP headers, reconstruct bidirectional flows, inspect matching TCP handshakes, and score 13 flow features with a separately trained Isolation Forest. A second pipeline ingests network-access logs, computes behavioural risk scores and preserves analyst decisions. Both pipelines use FastAPI, React, isolated sessions and transactional SQLite storage.
 
-**Live status:** publicly deployed on Render Free, with synthetic access data and reproducible experiments. Harthik's project modifications focus on inference serving, data validation, event/review storage, the connected investigation workflow, testing and deployment. The project draws inspiration from Induj Gupta's SentinelUEBA work and retains components from that MIT-licensed baseline; the [source and contribution record](docs/PROVENANCE.md) identifies reused code, pretrained artifacts and new engineering work.
+**Live status:** publicly deployed on Render Free, with a downloadable synthetic packet capture, synthetic access data and reproducible experiments. Harthik's modifications include packet parsing, flow-model training and evaluation, inference serving, data validation, transactional storage, testing and deployment. The project draws inspiration from Induj Gupta's SentinelUEBA work and retains components from that MIT-licensed baseline; the [source and contribution record](docs/PROVENANCE.md) identifies reused code, pretrained artifacts and new engineering work.
 
 ## ML and data engineering focus
 
 | Area | What this project demonstrates |
 |---|---|
-| Machine learning engineering | Saved-model integration, causal feature computation, explainable inference, fixed-threshold evaluation and reproducible model/source identity |
-| Data engineering | Strict event schemas, UTC normalization, chronological replay, duplicate/conflict handling, transactional storage and analyst audit history |
+| Machine learning engineering | Newly trained flow Isolation Forest, capture-disjoint synthetic evaluation, 13 flow features, saved UEBA model integration and versioned inference |
+| Data engineering | Packet-to-flow transformation, capture SHA-256 lineage, queryable SQL flow tables, schema validation, chronological event replay and transactional audits |
 | Deployment and verification | Docker, FastAPI, React/TypeScript, GitHub Actions, public HTTPS and measured local/cloud experiments |
-| Computer Networks coursework | Client/server protocols, application delivery semantics, session isolation, per-IP evidence and HTTP batching trade-offs |
+| Computer Networks coursework | IP/TCP/UDP header parsing, bidirectional five-tuples, TCP sequence acknowledgements and handshake timing, packet/byte accounting, HTTP delivery experiments |
 
 ## Course and portfolio evidence
 
 | Start here | Contents |
 |---|---|
 | [Current academic report](docs/ACADEMIC_REPORT.md) | Problem, CN objectives, architecture, implementation, evaluation and limitations |
+| [Packet analysis lab](docs/PACKET_LAB.md) | PCAP parser, TCP/UDP flow pipeline, trained flow model, reproducibility and Wireshark demonstration |
 | [Computer networks lab](docs/NETWORK_LAB.md) | HTTP batching, retry semantics, ordering, session isolation and repeatable commands |
 | [Measured results](docs/RESULTS.md) | Local and Render experiments with raw JSON evidence |
 | [Presentation and résumé pack](docs/PORTFOLIO.md) | ML Engineer and Data Engineer résumé variants, project pitch, demonstration and viva answers |
@@ -27,6 +28,8 @@ A modified personal project connecting machine learning inference with reliable 
 The live console exposes source-IP fan-out, failure ratio and activity windows. The lab replays identical inputs in different batch sizes, checks matching outputs and tests application delivery failures through real HTTP requests. It records client and server timings separately.
 
 ## Try the demo
+
+**[Open Packet analysis](https://sentinelueba-harthik.onrender.com/#packets)** and select **Analyze sample capture**. The sample contains 378 packets, 32 flows and 22 matching TCP handshakes. Select flow 2 to inspect a handshake, compare UDP traffic, then export CSV/JSON. The same sample can be downloaded and opened in Wireshark. Uploads accept classic PCAP up to 512 KiB; PCAPNG must first be converted to pcap. The app performs offline capture analysis, not automatic capture of browser or server network traffic.
 
 The **Live inference** view connects raw event submission, real model scoring, evidence inspection and server-side analyst feedback. See [backend setup and guarantees](docs/BACKEND.md). The original benchmark replay remains available in Alerts, Topology and Model audit.
 
@@ -41,6 +44,10 @@ Start-Process .\assets\SentinelUEBA-React-Console.html
 The console opens with the coverage policy. Search by principal, behaviour, IP or resource; inspect an alert; compare policies; explore entity topology; open Model audit. [Three-minute demo script](docs/DEMO_SCRIPT.md).
 
 ## What the evidence shows
+
+The separate flow model trains on 480 benign flows, selects a threshold using 192 validation flows, and evaluates on 256 flows from different synthetic captures. The fixed test produces 64 true positives, 13 false positives, 179 true negatives and 0 false negatives: 83.12% precision, 100% recall and 6.77% benign false-positive rate. This is a deliberately simple synthetic benchmark, not operational-traffic detection accuracy. The [packet lab](docs/PACKET_LAB.md) and [model manifest](artifacts/packet_flow/flow_model.json) document the features, capture hashes, limitations and reproduction commands. The packet HTTP harness independently compares header and flow statistics with dpkt.
+
+### Retained access-log benchmark
 
 The supplied chronological test contains **115,360 events and 2,300 attacks**. Recomputed from the supplied scored events:
 

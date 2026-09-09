@@ -28,6 +28,9 @@ The baseline archive `SentinelUEBA_Honeywell_Submission (2).zip` was supplied on
 | Data workflow: strict API schemas, canonical timestamps, transactional events/reviews, duplicate and conflict handling | Modifications in Harthik's project, developed with coding-assistant support |
 | Docker/Render deployment, GitHub Actions and regression verification | Modifications in Harthik's project, developed with coding-assistant support |
 | HTTP experiments, network evidence display, current academic report and ML/DE portfolio presentation | Modifications in Harthik's project; measurements produced by executing the published harness |
+| PCAP parser, flow feature extraction, TCP handshake evidence, packet UI and transactional capture/flow tables | New extension in Harthik's modified project, developed with coding-assistant support |
+| Packet-flow Isolation Forest, generated PCAP sample and capture-disjoint evaluation | Newly trained with `scripts/train_flow_model.py`; separate from the retained pretrained UEBA artifacts |
+| Independent packet decoding and HTTP checks | `scripts/packet_lab.py` compares the server with dpkt 1.9.8; no dpkt code is copied into the parser |
 
 The experiment JSON records its input hash, model/source identity, checkout revision and harness hash. Results describe the specified environment and workload. Coding-assistant support was used for implementation, testing, documentation and deployment of the current modifications.
 

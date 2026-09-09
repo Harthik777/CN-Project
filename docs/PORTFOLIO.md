@@ -2,13 +2,24 @@
 
 **Aspiring Machine Learning Engineer / Data Engineer**
 
-Project: [SentinelUEBA](https://sentinelueba-harthik.onrender.com/#live) · [GitHub](https://github.com/Harthik777/CN-Project)
+Project: [SentinelUEBA packet analysis](https://sentinelueba-harthik.onrender.com/#packets) · [GitHub](https://github.com/Harthik777/CN-Project)
+
+## Packet-to-flow résumé entry
+
+**SentinelUEBA: Network Flow Analytics and ML Anomaly Detection**
+
+- Built and deployed a Dockerized FastAPI and React application that parses IPv4/IPv6 TCP/UDP captures into bidirectional flows, validates TCP handshake evidence and serves anomaly scores from 13 flow features.
+- Trained an Isolation Forest on 480 benign flows, selected a threshold on 192 validation flows and evaluated 256 flows from separate synthetic captures, obtaining 83.12% precision and a 6.77% benign false-positive rate.
+- Engineered a Python and SQLite packet-to-flow pipeline with capture SHA-256 lineage, typed SQL flow records, transactional ingestion, idempotent retries and CSV/JSON exports.
+- Verified the application with 66 automated tests and a 15-check packet HTTP harness that compares headers, lengths and flow counts with an independent decoder; integrated verification into GitHub Actions.
+
+Use the explicit synthetic qualifier on the ML metrics. The separate four-component pretrained UEBA pipeline and measured 61.4% cloud replay reduction remain useful additional talking points; their workload and attribution details appear below. The packet module is the stronger lead for a combined core-CN and ML/data-engineering résumé entry.
 
 ## Project title and pitch
 
 **SentinelUEBA — ML-Powered Network Access Analytics**
 
-“My modified SentinelUEBA project connects machine learning inference with reliable event processing. I developed the application workflow around validated ingestion, explainable predictions, isolated sessions and a persistent local audit trail, and deployed a public demo. I evaluated batching and delivery correctness with reproducible experiments. The project combines my interests in ML engineering and data engineering while addressing Computer Networks course concepts.”
+“My modified SentinelUEBA project turns network packet captures into structured TCP/UDP flows and ML anomaly evidence. I built header parsing and handshake inspection, trained and evaluated a separate flow model on reproducible synthetic captures, and deployed the pipeline with transactional SQL storage and a public React demo. The project also serves pretrained access-log models and measures HTTP delivery reliability. It connects core Computer Networks concepts with my ML and data engineering interests.”
 
 Short profile: “Aspiring Machine Learning Engineer / Data Engineer interested in turning event data and trained models into reliable, explainable applications.”
 

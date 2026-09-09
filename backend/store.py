@@ -42,6 +42,17 @@ class Store:
                 session TEXT NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
                 request_id TEXT NOT NULL, body TEXT NOT NULL, created REAL NOT NULL,
                 UNIQUE(session,request_id));
+              CREATE TABLE IF NOT EXISTS captures (
+                session TEXT PRIMARY KEY REFERENCES sessions(id) ON DELETE CASCADE,
+                capture_sha256 TEXT NOT NULL, model_id TEXT NOT NULL,
+                summary TEXT NOT NULL, created REAL NOT NULL);
+              CREATE TABLE IF NOT EXISTS capture_flows (
+                session TEXT NOT NULL REFERENCES captures(session) ON DELETE CASCADE,
+                flow_id INTEGER NOT NULL, source_ip TEXT NOT NULL, destination_ip TEXT NOT NULL,
+                source_port INTEGER NOT NULL, destination_port INTEGER NOT NULL, protocol TEXT NOT NULL,
+                packets INTEGER NOT NULL, ip_bytes INTEGER NOT NULL, duration_ms REAL NOT NULL,
+                anomaly_score REAL NOT NULL, is_alert INTEGER NOT NULL, evidence TEXT NOT NULL,
+                PRIMARY KEY(session,flow_id));
             """)
 
     @contextmanager
@@ -148,3 +159,41 @@ class Store:
             db.execute("INSERT INTO feedback(session,request_id,body,created) VALUES (?,?,?,?)",
                        (sid, body["request_id"], encode(body), time.time()))
             return {"saved": True, "duplicate": False}
+
+    def capture_snapshot(self, sid, token):
+        with self.lock, self.connect() as db:
+            self.authorize(db, sid, token)
+            row = db.execute("SELECT summary FROM captures WHERE session=?", (sid,)).fetchone()
+            if not row:
+                raise HTTPException(404, "No capture saved for this session")
+            result = json.loads(row[0])
+            result["flows"] = [json.loads(row[0]) for row in db.execute(
+                "SELECT evidence FROM capture_flows WHERE session=? ORDER BY flow_id", (sid,))]
+            return result
+
+    def analyze_capture(self, sid, token, data, scorer):
+        if not self.lock.acquire(blocking=False):
+            raise HTTPException(429, "Analyzer is busy. Retry the same capture shortly.")
+        try:
+            with self.connect() as db:
+                self.authorize(db, sid, token)
+                digest = hashlib.sha256(data).hexdigest()
+                prior = db.execute("SELECT capture_sha256,model_id FROM captures WHERE session=?", (sid,)).fetchone()
+                if prior:
+                    if prior[0] != digest or prior[1] != scorer.model_id:
+                        raise HTTPException(409, "This session already contains another capture or model version; create a new session")
+                    return {"saved": False, "duplicate": True, "capture_sha256": digest}
+                started = time.perf_counter()
+                result = scorer(data)
+                result["summary"]["analysis_ms"] = round((time.perf_counter()-started)*1000, 3)
+                summary = {k: v for k, v in result.items() if k != "flows"}
+                db.execute("INSERT INTO captures VALUES (?,?,?,?,?)",
+                           (sid, digest, scorer.model_id, encode(summary), time.time()))
+                for row in result["flows"]:
+                    db.execute("INSERT INTO capture_flows VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                        (sid, row["flow_id"], row["source_ip"], row["destination_ip"], row["source_port"],
+                         row["destination_port"], row["protocol"], row["packets"], row["ip_bytes"], row["duration_ms"],
+                         row["anomaly_score"], int(row["is_alert"]), encode(row)))
+                return {"saved": True, "duplicate": False, "capture_sha256": digest}
+        finally:
+            self.lock.release()
