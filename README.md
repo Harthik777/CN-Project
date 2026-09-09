@@ -4,7 +4,7 @@
 
 A modified personal project connecting Computer Networks, machine learning and data engineering. Upload a packet capture, decode IPv4/IPv6 TCP/UDP headers, reconstruct bidirectional flows, inspect matching TCP handshakes, and score 13 flow features with a separately trained Isolation Forest. A second pipeline ingests network-access logs, computes behavioural risk scores and preserves analyst decisions. Both pipelines use FastAPI, React, isolated sessions and transactional SQLite storage.
 
-**Live status:** publicly deployed on Render Free, with a downloadable synthetic packet capture, synthetic access data and reproducible experiments. Harthik's modifications include packet parsing, flow-model training and evaluation, inference serving, data validation, transactional storage, testing and deployment.
+**Live status:** the [GitHub Pages demo](https://harthik777.github.io/CN-Project/#packets) includes real browser-side PCAP analysis and the trained flow model. Render Free provides optional SQL persistence and access-log inference. The application can be cached or downloaded for offline presentations. Harthik's modifications include packet parsing, flow-model training and evaluation, inference serving, data validation, transactional storage, testing and deployment.
 
 ## ML and data engineering focus
 
@@ -27,13 +27,23 @@ A modified personal project connecting Computer Networks, machine learning and d
 
 The live console exposes source-IP fan-out, failure ratio and activity windows. The lab replays identical inputs in different batch sizes, checks matching outputs and tests application delivery failures through real HTTP requests. It records client and server timings separately.
 
+## Dependable demonstration
+
+- Packet analysis computes a real local result first. Automatic mode additionally saves to SQL when the server is reachable; Browser only mode never uploads the capture.
+- The browser and Python implementations are compared over 130 captures, including malformed inputs, and 1,050 flows. Their scores agree within 1e-12 with matching alert decisions.
+- A service worker caches the application shell after a successful visit. Download offline HTML for a presentation that does not depend on reaching either host.
+- The latest packet report and live-event result are retained separately in this browser for up to seven days, with export and clear controls. These are browser copies, not replicated server storage.
+- Access-log inference still requires Render; saved results remain read-only when disconnected, and the bundled Alerts replay is available.
+
+See [failure behavior, reproduction and limits](docs/DEPENDABILITY.md).
+
 ## Try the demo
 
-**[Open Packet analysis](https://sentinelueba-harthik.onrender.com/#packets)** and select **Analyze sample capture**. The sample contains 378 packets, 32 flows and 22 matching TCP handshakes. Select flow 2 to inspect a handshake, compare UDP traffic, then export CSV/JSON. The same sample can be downloaded and opened in Wireshark. Uploads accept classic PCAP up to 512 KiB; PCAPNG must first be converted to pcap. The app performs offline capture analysis, not automatic capture of browser or server network traffic.
+**[Open Packet analysis](https://harthik777.github.io/CN-Project/#packets)** and select **Analyze sample capture**. The sample contains 378 packets, 32 flows and 22 matching TCP handshakes. Select flow 2 to inspect a handshake, compare UDP traffic, then export CSV/JSON. The same sample can be downloaded and opened in Wireshark. Uploads accept classic PCAP up to 512 KiB; PCAPNG must first be converted to pcap. The app performs offline capture analysis, not automatic capture of browser or server network traffic.
 
 The **Live inference** view connects raw event submission, real model scoring, evidence inspection and server-side analyst feedback. See [backend setup and guarantees](docs/BACKEND.md). The original benchmark replay remains available in Alerts, Topology and Model audit.
 
-**Public full-stack demo:** [Open SentinelUEBA on Render](https://sentinelueba-harthik.onrender.com/#live). The [GitHub Pages frontend](https://harthik777.github.io/CN-Project/) connects to the same Render API. Hosting works independently of the developer's computer. Render Free can sleep when idle; demo sessions use temporary disk and can be lost on sleep, restart or redeployment. Export evidence before leaving. See the [deployment record](docs/PUBLIC_DEPLOYMENT.md).
+**Public full-stack demo:** [Open SentinelUEBA on Render](https://sentinelueba-harthik.onrender.com/#live). The [GitHub Pages demo](https://harthik777.github.io/CN-Project/#packets) analyzes packet captures locally even when the Render API is unavailable. Hosting works independently of the developer's computer. Render Free can sleep when idle; demo sessions use temporary disk and can be lost on sleep, restart or redeployment. Export evidence before leaving. See the [deployment record](docs/PUBLIC_DEPLOYMENT.md).
 
 Open [the self-contained console](assets/SentinelUEBA-React-Console.html) in a modern browser. It needs no installation or internet. Download the HTML before opening it if viewing this README on GitHub.
 

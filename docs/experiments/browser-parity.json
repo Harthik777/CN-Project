@@ -1,0 +1,10 @@
+{
+  "captures": 130,
+  "rejected": 29,
+  "accepted": 101,
+  "compared_flows": 1050,
+  "max_score_error": 1.1102230246251565e-16,
+  "model_id": "98feff1193f3da62619ea86de2d20e2bfbd1a952a3b344743eafa789ace14677",
+  "checks": "Packet accounting, flow boundaries, handshakes, 13 features, scores, flags, provenance and malformed captures",
+  "passed": true
+}

@@ -1,5 +1,7 @@
 # Packet-to-flow network analytics
 
+The packet lab also runs entirely in your browser when the server is unavailable. Use the [primary Pages demo](https://harthik777.github.io/CN-Project/#packets), or download its offline HTML. [Resilience design and verification](DEPENDABILITY.md).
+
 Owner: **Harthik M V**. This extension adds packet-level Computer Networks work and a separate ML/data pipeline to SentinelUEBA.
 
 Public entry: [Packet analysis](https://sentinelueba-harthik.onrender.com/#packets). Select **Analyze sample capture**, inspect a flow, then export JSON or CSV. A sample download lets an examiner inspect the exact same packet bytes in Wireshark. The sample is constructed traffic using documentation-only addresses; it is not a live network recording.

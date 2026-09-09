@@ -8,6 +8,7 @@
     "data:sync": "node scripts/sync-data.mjs",
     "dev": "npm run data:sync && vite",
     "check": "npm run data:sync && tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/resilience.test.mjs",
     "build": "npm run data:sync && tsc --noEmit && vite build && node scripts/publish-build.mjs",
     "preview": "vite preview"
   },

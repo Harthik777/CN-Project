@@ -12,6 +12,7 @@ from pathlib import Path
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
@@ -23,6 +24,7 @@ from backend.packets import CaptureError, MAX_CAPTURE_BYTES, MAX_FLOWS, MAX_PACK
 
 ROOT = Path(__file__).resolve().parent.parent
 log = logging.getLogger("sentinel.api")
+API_VERSION = "4.1.0"
 
 
 class ModelScorer:
@@ -61,9 +63,10 @@ def create_app(db_path=None, scorer=None):
     async def lifespan(app):
         app.state.scorer = scorer or ModelScorer()
         app.state.flow_scorer = FlowScorer()
+        app.state.started_at = time.monotonic()
         yield
 
-    app = FastAPI(title="SentinelUEBA Network Analytics API", version="4.0.0", lifespan=lifespan,
+    app = FastAPI(title="SentinelUEBA Network Analytics API", version=API_VERSION, lifespan=lifespan,
                   description="Real model inference on bounded chronological replays. Synthetic demonstration inputs; no production detection claims.")
     app.state.store = store
     bearer = HTTPBearer(auto_error=False)
@@ -113,7 +116,8 @@ def create_app(db_path=None, scorer=None):
         model = app.state.scorer
         with store.connect() as db:
             db.execute("SELECT 1").fetchone()
-        return {"status": "ok", "version": "4.0.0", "model_id": model.model_id,
+        return {"status": "ok", "version": API_VERSION, "model_id": model.model_id,
+                "uptime_seconds": round(time.monotonic() - app.state.started_at, 3),
                 "flow_model_id": app.state.flow_scorer.model_id,
                 "packet_analysis": {"format": "classic pcap", "max_bytes": MAX_CAPTURE_BYTES, "max_packets": MAX_PACKETS, "max_flows": MAX_FLOWS},
                 "thresholds": model.thresholds, "max_events": MAX_EVENTS,
@@ -181,7 +185,13 @@ def create_app(db_path=None, scorer=None):
     def index():
         return FileResponse(ROOT / "assets" / "SentinelUEBA-React-Console.html")
 
+    @app.get("/sw.js", include_in_schema=False)
+    def service_worker():
+        return FileResponse(ROOT / "assets" / "sw.js", media_type="application/javascript",
+                            headers={"Cache-Control": "no-cache", "Service-Worker-Allowed": "/"})
+
     # CORS also wraps early body-size and rate-limit responses.
+    app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=5)
     app.add_middleware(CORSMiddleware,
         allow_origins=[v.strip() for v in os.getenv("SENTINEL_ALLOWED_ORIGINS", "https://harthik777.github.io,http://127.0.0.1:8765,http://localhost:5173").split(",") if v.strip()],
         allow_methods=["GET", "POST", "OPTIONS"], allow_headers=["Authorization", "Content-Type"])

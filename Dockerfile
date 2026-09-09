@@ -4,6 +4,7 @@ COPY frontend/package.json frontend/package-lock.json ./frontend/
 RUN cd frontend && npm ci
 COPY frontend ./frontend
 COPY assets/dashboard_data.json ./assets/dashboard_data.json
+COPY artifacts/packet_flow/browser_model.json artifacts/packet_flow/sample_capture.pcap ./artifacts/packet_flow/
 RUN cd frontend && npm run build
 
 FROM python:3.11-slim
@@ -24,6 +25,7 @@ COPY --chown=app:app artifacts/model_bundle.joblib artifacts/autoencoder.pt arti
 COPY --chown=app:app artifacts/packet_flow ./artifacts/packet_flow
 COPY --chown=app:app docs/THIRD_PARTY_NOTICES.md ./THIRD_PARTY_NOTICES.md
 COPY --from=frontend-build --chown=app:app /build/assets/SentinelUEBA-React-Console.html ./assets/SentinelUEBA-React-Console.html
+COPY --from=frontend-build --chown=app:app /build/assets/sw.js ./assets/sw.js
 RUN mkdir -p /home/app/state && chown -R app:app /home/app
 USER app
 EXPOSE 7860

@@ -201,6 +201,18 @@ class PacketApiTests(unittest.TestCase):
         with self.app.state.store.connect() as db:
             self.assertEqual(db.execute("SELECT COUNT(*),SUM(packets),SUM(ip_bytes) FROM capture_flows").fetchone()[:], (32, 378, 157599))
 
+    def test_runtime_health_and_compressed_offline_shell(self):
+        health = self.client.get("/api/health").json()
+        self.assertGreaterEqual(health["uptime_seconds"], 0)
+        worker = self.client.get("/sw.js")
+        self.assertEqual(worker.status_code, 200)
+        self.assertEqual(worker.headers["cache-control"], "no-cache")
+        self.assertIn("sentinel-shell:", worker.text)
+        page = self.client.get("/", headers={"Accept-Encoding": "gzip"})
+        self.assertEqual(page.status_code, 200)
+        self.assertEqual(page.headers["content-encoding"], "gzip")
+        self.assertIn("Download offline HTML", page.text)
+
     def test_capture_authorization(self):
         other = self.client.post("/api/sessions", json={}).json()
         for headers in ({"Content-Type": "application/octet-stream"}, {"Authorization": "Bearer " + other["token"]}):

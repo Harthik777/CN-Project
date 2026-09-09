@@ -61,6 +61,7 @@ import dashboardData from "./data/dashboard-data.json";
 import TopologyView from "./TopologyView";
 import LiveConsole from "./LiveConsole";
 import PacketConsole from "./PacketConsole";
+import OfflineTools from "./OfflineTools";
 import type {
   AlertRecord,
   DashboardData,
@@ -1521,9 +1522,13 @@ function ModelAudit() {
 export default function App() {
   const [view, setView] = useState<ViewName>(() => {
     const hash = window.location.hash.slice(1);
-    return ["alerts", "topology", "evaluation", "live", "packets"].includes(hash) ? hash as ViewName : window.location.protocol === "file:" ? "alerts" : "packets";
+    return ["alerts", "topology", "evaluation", "live", "packets"].includes(hash) ? hash as ViewName : "packets";
   });
   useEffect(() => { window.history.replaceState(null, "", `#${view}`); }, [view]);
+  useEffect(() => {
+    const navigate = () => { const hash = window.location.hash.slice(1); if (["alerts","topology","evaluation","live","packets"].includes(hash)) setView(hash as ViewName); };
+    window.addEventListener("hashchange",navigate); return () => window.removeEventListener("hashchange",navigate);
+  },[]);
   const [policy, setPolicy] = useState<PolicyKey>("top_2pct");
   const [globalSearch, setGlobalSearch] = useState("");
   const [globalSearchDraft, setGlobalSearchDraft] = useState("");
@@ -1619,11 +1624,11 @@ export default function App() {
           <div className="command-actions">
             <span className="system-state">
               <StatusDot />
-              {view === "live" || view === "packets" ? "Live API" : "Replay"}
+              {view === "packets" ? "Browser + API" : view === "live" ? "Server inference" : "Replay"}
             </span>
             <span className="time-range">
               <CalendarDays size={15} />
-              {view === "live" || view === "packets" ? "Isolated demo session" : "14-day replay"}
+              {view === "packets" ? "Offline capable" : view === "live" ? "Isolated demo session" : "14-day replay"}
             </span>
             <button
               type="button"
@@ -1648,6 +1653,7 @@ export default function App() {
             </span>
           </div>
         </header>
+        <OfflineTools />
 
         {view === "alerts" && (
           <>

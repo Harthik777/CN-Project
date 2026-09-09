@@ -1,41 +1,27 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Download, Network, Play, RefreshCw, Upload } from "lucide-react";
+import { ApiError, ConnectionError, apiRequest } from "./api";
+import type { Credential } from "./api";
+import { analyzeCapture, isReport } from "./packet-engine";
+import type { BrowserModel, Flow, Report } from "./packet-engine";
+import { clearResult, readResult, saveResult } from "./result-cache";
+import browserModel from "./data/browser-model.json";
+import sampleCapture from "./data/sample-capture.json";
 
 const API = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
 const KEY = `sentinel-packet-session-v1:${API || window.location.origin}`;
 const DOC = "https://github.com/Harthik777/CN-Project/blob/codex/full-stack/docs/PACKET_LAB.md";
-type Credential = { session_id: string; token: string };
-type Packet = { packet_number: number; direction: string; offset_ms: number; flags: string; seq: number | null; ack: number | null; ip_bytes: number; payload_bytes: number; ttl: number };
-type Flow = { flow_id: number; ip_version: number; source_ip: string; source_port: number; destination_ip: string; destination_port: number;
-  protocol: string; packets: number; ip_bytes: number; duration_ms: number; payload_bytes: number; forward_packets: number; reverse_packets: number;
-  iat_mean_ms: number; anomaly_score: number; is_alert: boolean; evidence: string[]; features: Record<string, number>; packet_preview: Packet[];
-  handshake: { syn_packet: number; syn_ack_packet: number; ack_packet: number; syn_to_syn_ack_ms: number; completion_ms: number } | null };
-type Report = { summary: { capture_sha256: string; file_bytes: number; packet_records: number; parsed_packets: number; skipped_packets: number;
-  skipped_by_reason: Record<string, number>; flows: number; protocols: Record<string, number>; completed_handshakes: number; total_ip_bytes: number;
-  duration_ms: number; analysis_ms: number; flagged_flows: number; link_type: string; start_utc: string; end_utc: string; out_of_order_records: number; flow_definition: string };
-  flows: Flow[]; limitations: string[]; model: { model_id: string; model: string; feature_count: number; threshold: number; training_scope: string;
-  train_flows: number; validation_flows: number; test_flows: number; test_metrics: { precision: number; recall: number; f1: number; false_positive_rate: number } } };
+const CACHE_KEY = "sentinel-packet-report-v1";
+const MODEL = browserModel as BrowserModel;
+const SAMPLE_URL = `data:application/vnd.tcpdump.pcap;base64,${sampleCapture.base64}`;
 
 function saved(): Credential | null {
   try { const item = JSON.parse(localStorage.getItem(KEY) || "null"); return item?.session_id && item?.token ? item : null; }
   catch { return null; }
 }
 
-class ApiError extends Error { constructor(public status: number, message: string) { super(message); } }
 async function request<T>(path: string, credential?: Credential | null, body?: BodyInit, contentType = "application/json"): Promise<T> {
-  const controller = new AbortController();
-  const timer = window.setTimeout(() => controller.abort(), 90000);
-  try {
-    const response = await fetch(`${API}${path}`, { method: body === undefined ? "GET" : "POST", body,
-      headers: { ...(body === undefined ? {} : { "Content-Type": contentType }), ...(credential ? { Authorization: `Bearer ${credential.token}` } : {}) }, signal: controller.signal });
-    if (!response.headers.get("content-type")?.includes("application/json")) throw new Error("Packet API unavailable. The free server may be waking up; try again shortly.");
-    const data = await response.json();
-    if (!response.ok) throw new ApiError(response.status, data.detail || `Request failed (${response.status})`);
-    return data as T;
-  } catch (error) {
-    if (error instanceof Error && error.name === "AbortError") throw new Error("Request timed out. Use Refresh saved report before submitting again.");
-    throw error;
-  } finally { window.clearTimeout(timer); }
+  return apiRequest<T>(API,path,{credential,body,contentType,timeoutMs:12000,attempts:1});
 }
 
 function download(content: string, name: string, type: string) {
@@ -45,49 +31,68 @@ function download(content: string, name: string, type: string) {
 }
 
 export default function PacketConsole() {
+  const [initial] = useState(() => readResult(CACHE_KEY,isReport));
   const [credential, setCredential] = useState<Credential | null>(saved);
-  const [report, setReport] = useState<Report | null>(null);
+  const [report, setReport] = useState<Report | null>(initial?.data || null);
+  const [origin, setOrigin] = useState(initial ? `Browser copy · ${initial.source} · saved ${new Date(initial.saved_at).toLocaleString()}` : "Ready for browser or server analysis");
+  const [mode, setMode] = useState<"auto" | "browser">("auto");
+  const [stored, setStored] = useState(!!initial);
   const [file, setFile] = useState<File | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [onlyAlerts, setOnlyAlerts] = useState(false);
-  async function run(label: string, action: () => Promise<void>) {
+  async function run(label: string, action: () => Promise<unknown>) {
     setBusy(label); setError(""); setNotice("");
     try { await action(); } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
     finally { setBusy(""); }
   }
+  function remember(next: Report, source: string) {
+    setReport(next); setOrigin(`${source} · ${new Date().toLocaleString()}`);
+    setStored(!!saveResult(CACHE_KEY,next,source));
+  }
   async function refresh(current = credential) {
     if (!current) return;
-    try { setReport(await request<Report>(`/api/sessions/${current.session_id}/capture`, current)); }
+    try { remember(await request<Report>(`/api/sessions/${current.session_id}/capture`, current),"Server inference"); return true; }
     catch (e) {
       if (e instanceof ApiError && (e.status === 401 || e.status === 410)) {
-        setCredential(null); setReport(null);
+        setCredential(null);
         try { localStorage.removeItem(KEY); } catch { /* Optional browser persistence. */ }
-        setNotice("The previous demo session is no longer available. Analyze a capture to start a new session.");
-      } else if (e instanceof ApiError && e.status === 404) { setReport(null); setNotice("This session has no saved capture yet. Analyze a capture to continue."); }
+        setNotice("The server session expired or restarted. Your displayed browser copy is still available for inspection and export.");
+      } else if (e instanceof ApiError && e.status === 404) { setNotice("The server has no saved capture for this session. Your displayed browser result is unchanged."); }
       else throw e;
     }
   }
-  useEffect(() => { if (credential) void run("Reading saved packet report…", () => refresh()); }, []);
   async function analyze(sample: boolean) {
-    let capture: Blob;
-    if (sample) {
-      const response = await fetch(`${API}/api/packets/sample`, { signal: AbortSignal.timeout(90000) });
-      if (!response.ok) throw new Error("Sample capture is unavailable; try again after the server wakes up.");
-      capture = await response.blob();
-    } else {
-      if (!file) throw new Error("Select a classic PCAP file first.");
-      capture = file;
+    if (!sample && (!file || !file.size || file.size > 512*1024)) throw new Error("Select a classic PCAP capture up to 512 KiB.");
+    const bytes = sample ? Uint8Array.from(atob(sampleCapture.base64),c => c.charCodeAt(0)) : new Uint8Array(await file!.arrayBuffer());
+    // A real local result is available before any network request. Invalid captures never replace the previous report.
+    const local = await analyzeCapture(bytes,MODEL);
+    setSelectedId(null); setCredential(null); clearResult(KEY); remember(local,"Browser inference");
+    if (mode === "browser" || window.location.protocol === "file:" || !navigator.onLine) {
+      setNotice("Analysis completed on this device using the trained forest. No capture was uploaded."); return;
     }
-    if (!capture.size || capture.size > 512 * 1024) throw new Error("Choose a capture up to 512 KiB. Use a shorter capture or export selected packets from Wireshark.");
-    const next = await request<Credential>("/api/sessions", null, "{}");
-    setCredential(next); setReport(null); setSelectedId(null);
-    try { localStorage.setItem(KEY, JSON.stringify(next)); } catch { /* Page-lifetime session still works. */ }
-    await request(`/api/sessions/${next.session_id}/capture`, next, capture, "application/vnd.tcpdump.pcap");
-    await refresh(next);
-    setNotice(sample ? "Synthetic sample analyzed. Results read back from the server." : "Capture analyzed. Header-derived flow results read back from the server.");
+    setBusy("Browser results ready. Checking the server for an optional SQL save…");
+    let uploadAttempted = false;
+    try {
+      const health = await apiRequest<{flow_model_id:string}>(API,"/api/health",{timeoutMs:4000,attempts:1});
+      if (health.flow_model_id !== MODEL.model.model_id) {
+        setNotice("Browser analysis completed. The server has a different model version, so this report was not uploaded. Reload to check for an update."); return;
+      }
+      const next = await request<Credential>("/api/sessions",null,"{}");
+      setCredential(next);
+      try { localStorage.setItem(KEY,JSON.stringify(next)); } catch { /* Export remains available. */ }
+      uploadAttempted = true;
+      await request(`/api/sessions/${next.session_id}/capture`,next,new Blob([bytes]),"application/vnd.tcpdump.pcap");
+      if (!await refresh(next)) return;
+      setNotice("Analysis saved to SQL and read back from the server. A browser copy is available for later inspection.");
+    } catch (e) {
+      if (!(e instanceof ConnectionError)) throw e;
+      setNotice(uploadAttempted
+        ? "Browser analysis completed successfully. A server save is unconfirmed; use Refresh saved report to check it when available."
+        : "The server is unavailable. Browser analysis completed successfully with the trained model. No capture was uploaded.");
+    }
   }
   const flows = [...(report?.flows || [])].sort((a, b) => b.anomaly_score-a.anomaly_score || a.flow_id-b.flow_id);
   const visible = onlyAlerts ? flows.filter(f => f.is_alert) : flows;
@@ -106,18 +111,21 @@ export default function PacketConsole() {
       <a className="packet-guide" href={DOC} target="_blank" rel="noreferrer">Packet lab & methodology ↗</a>
     </section>
     <div className="live-flow"><span>01 · Read PCAP headers</span><span>02 · Aggregate bidirectional flows</span><span>03 · Score 13 flow features</span><span>04 · Inspect + export evidence</span></div>
+    <div className="live-notice" role="status"><strong>{origin}</strong><p>Packet parsing and model scoring can run on this device. The server is optional for packet analysis.</p></div>
     {error && <div className="live-error" role="alert">{error}</div>}
     {(busy || notice) && <div className="live-notice" role="status">{busy || notice}</div>}
     <section className="live-panel">
       <div className="live-control-row">
+        <label>Analysis mode<select aria-label="Packet analysis mode" disabled={!!busy} value={mode} onChange={e => setMode(e.target.value as "auto" | "browser")}>
+          <option value="auto">Automatic: browser + optional server save</option><option value="browser">Browser only: no upload</option></select></label>
         <button className="live-primary" disabled={!!busy} onClick={() => void run("Reading and analyzing the sample capture…", () => analyze(true))}><Play size={16}/>Analyze sample capture</button>
-        <a href={`${API}/api/packets/sample`} download="sentinel-synthetic-sample.pcap">Download sample PCAP</a>
+        <a href={SAMPLE_URL} download="sentinel-synthetic-sample.pcap">Download sample PCAP</a>
         <button disabled={!!busy || !credential} onClick={() => void run("Reading saved report…", () => refresh())}><RefreshCw size={15}/>Refresh saved report</button>
       </div>
       <div className="packet-upload"><label htmlFor="packet-capture">Analyze your capture<input id="packet-capture" type="file" accept=".pcap,.cap,application/vnd.tcpdump.pcap" disabled={!!busy} onChange={e => setFile(e.target.files?.[0] || null)}/></label>
         <button disabled={!!busy || !file} onClick={() => void run("Uploading capture and extracting flows…", () => analyze(false))}><Upload size={15}/>Upload and analyze</button></div>
       <p className="live-muted">Classic PCAP · up to 512 KiB / 6,000 packets / 250 flows · Ethernet, raw IP, Linux cooked v1 · IPv4 and IPv6. Convert PCAPNG using Wireshark Save As → pcap.</p>
-      <p className="live-muted">The server reads the uploaded file and saves header-derived results. Payloads are discarded. Use a capture you are authorized to share. The bundled sample is generated traffic, not a recording of a live network.</p>
+      <p className="live-muted">Automatic mode analyzes locally first and uploads to the server when reachable. Browser-only mode keeps the file on this device. Results contain headers and statistics, never payloads. The bundled sample is generated traffic.</p>
     </section>
     <div className="live-metrics">
       <div><span>PARSED PACKETS</span><strong>{summary?.parsed_packets ?? "0"}</strong><small>{summary ? `${summary.skipped_packets} skipped / ${summary.packet_records} records` : "TCP and UDP packet headers"}</small></div>
@@ -152,8 +160,9 @@ export default function PacketConsole() {
       <p>Synthetic test precision {(report.model.test_metrics.precision*100).toFixed(1)}% · recall {(report.model.test_metrics.recall*100).toFixed(1)}% · false-positive rate {(report.model.test_metrics.false_positive_rate*100).toFixed(1)}%. These results do not establish performance on operational traffic.</p>
       <details><summary>Analysis limits</summary>{report.limitations.map(text => <p className="live-muted" key={text}>{text}</p>)}</details>
     </section>}
-    <footer className="live-panel live-footer"><p>Results are saved in an isolated 24-hour demo session. Free hosting may lose sessions after a restart. Export a report for your submission.</p><div className="live-control-row">
-      <button disabled={!report} onClick={() => report && download(JSON.stringify(report, null, 2), "sentinel-packet-report.json", "application/json")}><Download size={15}/>Export report JSON</button>
-      <button disabled={!report} onClick={exportCsv}><Download size={15}/>Export flows CSV</button></div></footer>
+    <footer className="live-panel live-footer"><p>{stored ? "The latest report is stored in this browser for up to 7 days." : "No durable browser copy is available yet. Export important results."} Server sessions last up to 24 hours and may be lost after a restart. Browser copies are not server backups.</p><div className="live-control-row">
+      <button disabled={!report} onClick={() => report && download(JSON.stringify({...report, execution: {description:origin}}, null, 2), "sentinel-packet-report.json", "application/json")}><Download size={15}/>Export report JSON</button>
+      <button disabled={!report} onClick={exportCsv}><Download size={15}/>Export flows CSV</button>
+      <button disabled={!!busy} onClick={() => { clearResult(CACHE_KEY); clearResult(KEY); setReport(null); setCredential(null); setStored(false); setOrigin("Ready for browser or server analysis"); setNotice("Browser report and session connection cleared."); }}>Clear browser report</button></div></footer>
   </main>;
 }

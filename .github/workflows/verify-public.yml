@@ -19,6 +19,7 @@ jobs:
           mkdir -p output
           python - <<'PY'
           import hashlib
+          import ast
           from pathlib import Path
           digest = hashlib.sha256()
           for name in ('artifacts/packet_flow/flow_model.joblib', 'artifacts/packet_flow/flow_model.json', 'backend/packets.py', 'backend/flow_model.py'):
@@ -26,11 +27,14 @@ jobs:
               digest.update(path.name.encode())
               digest.update(path.read_bytes())
           Path('output/expected-flow-id.txt').write_text(digest.hexdigest())
+          source = ast.parse(Path('backend/app.py').read_text())
+          version = next(ast.literal_eval(node.value) for node in source.body if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == 'API_VERSION' for t in node.targets))
+          Path('output/expected-api-version.txt').write_text(version)
           PY
           ready=0
           for attempt in {1..30}; do
             curl --fail --silent --show-error --connect-timeout 5 --max-time 15 https://sentinelueba-harthik.onrender.com/api/health > output/public-health.json || true
-            if python -c "import json,pathlib; assert json.loads(pathlib.Path('output/public-health.json').read_text()).get('flow_model_id') == pathlib.Path('output/expected-flow-id.txt').read_text()" 2>/dev/null; then
+            if python -c "import json,pathlib; health=json.loads(pathlib.Path('output/public-health.json').read_text()); assert health.get('flow_model_id') == pathlib.Path('output/expected-flow-id.txt').read_text(); assert health.get('version') == pathlib.Path('output/expected-api-version.txt').read_text()" 2>/dev/null; then
               ready=1
               break
             fi
@@ -49,4 +53,5 @@ jobs:
             output/packet-render.json
             output/public-health.json
             output/expected-flow-id.txt
+            output/expected-api-version.txt
             output/public-frontend.json
