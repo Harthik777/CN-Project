@@ -62,6 +62,7 @@ import TopologyView from "./TopologyView";
 import LiveConsole from "./LiveConsole";
 import PacketConsole from "./PacketConsole";
 import OfflineTools from "./OfflineTools";
+import { resolveView } from "./navigation";
 import type {
   AlertRecord,
   DashboardData,
@@ -72,6 +73,7 @@ import type {
 } from "./types";
 
 const DATA = dashboardData as unknown as DashboardData;
+const SERVER_ENABLED = import.meta.env.VITE_ENABLE_SERVER === "true";
 const MAX_VISIBLE_ALERTS = 500;
 const FEEDBACK_PREFIX = `sentinel-feedback-${DATA.snapshot_sha256}-`;
 
@@ -1520,13 +1522,10 @@ function ModelAudit() {
 }
 
 export default function App() {
-  const [view, setView] = useState<ViewName>(() => {
-    const hash = window.location.hash.slice(1);
-    return ["alerts", "topology", "evaluation", "live", "packets"].includes(hash) ? hash as ViewName : "packets";
-  });
+  const [view, setView] = useState<ViewName>(() => resolveView(window.location.hash, SERVER_ENABLED));
   useEffect(() => { window.history.replaceState(null, "", `#${view}`); }, [view]);
   useEffect(() => {
-    const navigate = () => { const hash = window.location.hash.slice(1); if (["alerts","topology","evaluation","live","packets"].includes(hash)) setView(hash as ViewName); };
+    const navigate = () => setView(resolveView(window.location.hash, SERVER_ENABLED));
     window.addEventListener("hashchange",navigate); return () => window.removeEventListener("hashchange",navigate);
   },[]);
   const [policy, setPolicy] = useState<PolicyKey>("top_2pct");
@@ -1553,9 +1552,9 @@ export default function App() {
         <ProductMark />
         <nav aria-label="Primary navigation">
           <RailButton label="Packet analysis" active={view === "packets"} onClick={() => setView("packets")}><Layers3 size={20}/></RailButton>
-          <RailButton label="Live inference" active={view === "live"} onClick={() => setView("live")}><Radio size={20}/></RailButton>
+          {SERVER_ENABLED && <RailButton label="Live inference" active={view === "live"} onClick={() => setView("live")}><Radio size={20}/></RailButton>}
           <RailButton
-            label="Alert workspace"
+            label="Access-log replay"
             active={view === "alerts"}
             onClick={() => setView("alerts")}
           >
@@ -1581,7 +1580,7 @@ export default function App() {
           <Activity size={17} />
           <StatusDot />
         </div>
-        <div className="rail-version">2.4</div>
+        <div className="rail-version">4.3</div>
       </aside>
 
       <div className="application-surface">
@@ -1634,14 +1633,15 @@ export default function App() {
               type="button"
               className="header-icon-button"
               onClick={() => window.location.reload()}
-              aria-label="Refresh score snapshot"
-              title="Refresh score snapshot"
+              aria-label="Reload demo"
+              title="Reload demo"
             >
               <RotateCw size={16} />
             </button>
             {view !== "packets" && <button
               type="button"
               className="notification-button"
+              onClick={() => { setGlobalSearch(""); setGlobalSearchDraft(""); setView("alerts"); }}
               aria-label="Alert notifications"
               title="Alert notifications"
             >
@@ -1695,13 +1695,13 @@ export default function App() {
         )}
 
         {view === "evaluation" && <ModelAudit />}
-        {view === "live" && <LiveConsole />}
+        {SERVER_ENABLED && view === "live" && <LiveConsole />}
         {view === "packets" && <PacketConsole />}
       </div>
 
-      <nav className="mobile-navigation" aria-label="Mobile navigation">
+      <nav className="mobile-navigation" aria-label="Mobile navigation" style={{gridTemplateColumns:`repeat(${SERVER_ENABLED ? 5 : 4}, 1fr)`}}>
         <button type="button" className={view === "packets" ? "active" : ""} onClick={() => setView("packets")}><Layers3 size={19}/>Packets</button>
-        <button type="button" className={view === "live" ? "active" : ""} onClick={() => setView("live")}><Radio size={19}/>Live inference</button>
+        {SERVER_ENABLED && <button type="button" className={view === "live" ? "active" : ""} onClick={() => setView("live")}><Radio size={19}/>Live inference</button>}
         <button
           type="button"
           className={view === "alerts" ? "active" : ""}

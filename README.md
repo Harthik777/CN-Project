@@ -4,7 +4,7 @@
 
 A modified personal project connecting Computer Networks, machine learning and data engineering. Upload a packet capture, decode IPv4/IPv6 TCP/UDP headers, reconstruct bidirectional flows, inspect matching TCP handshakes, and score 13 flow features with a separately trained Isolation Forest. A second pipeline ingests network-access logs, computes behavioural risk scores and preserves analyst decisions. Both pipelines use FastAPI, React, isolated sessions and transactional SQLite storage.
 
-**Live status:** the [GitHub Pages demo](https://harthik777.github.io/CN-Project/#packets) includes real browser-side PCAP analysis and the trained flow model. Render Free provides optional SQL persistence and access-log inference. The application can be cached or downloaded for offline presentations. Harthik's modifications include packet parsing, flow-model training and evaluation, inference serving, data validation, transactional storage, testing and deployment.
+**Public demo:** the [GitHub Pages application](https://harthik777.github.io/CN-Project/#packets) runs entirely in the browser. It includes fresh PCAP analysis with the trained flow model, stored access-log replay, analyst reviews, topology and model audit. It makes no Render API calls and needs no cloud session. The application can be cached or downloaded for offline presentations. The separate Python backend and its networking experiments remain available in the repository.
 
 ## ML and data engineering focus
 
@@ -29,13 +29,14 @@ The live console exposes source-IP fan-out, failure ratio and activity windows. 
 
 ## Dependable demonstration
 
-- Packet analysis computes a real local result first. Automatic mode additionally saves to SQL when the server is reachable; Browser only mode never uploads the capture.
+- Packet analysis parses and scores captures on the device. The public build excludes server-save controls and cloud inference routes.
 - The browser and Python implementations are compared over 136 captures, including six real-traffic excerpts and malformed inputs, and 1,244 flows. Their scores agree within 1e-12 with matching alert decisions.
 - A service worker caches the application shell after a successful visit. Download offline HTML for a presentation that does not depend on reaching either host.
-- The latest packet report and live-event result are retained separately in this browser for up to seven days, with export and clear controls. These are browser copies, not replicated server storage.
-- Access-log inference still requires Render; saved results remain read-only when disconnected, and the bundled Alerts replay is available.
+- The latest packet report is retained in this browser for up to seven days, with export and clear controls. Access-log reviews are saved locally and can be exported.
+- Access-log views explore bundled, precomputed synthetic results. They do not compute new UEBA predictions. Old `#live` links open this replay.
+- The topology includes an accessible connection table and switches to it if 3D rendering fails.
 
-Packet analysis defaults to **Browser only: no upload**. Download the [self-contained presentation HTML](https://github.com/Harthik777/CN-Project/releases/download/v4.2.0/SentinelUEBA-Offline.html) from the [v4.2.0 release](https://github.com/Harthik777/CN-Project/releases/tag/v4.2.0). See [failure behavior, reproduction and limits](docs/DEPENDABILITY.md) and the [public verification record](docs/PUBLIC_DEPLOYMENT.md).
+The public demo has no backend dependency. See [failure behavior, reproduction and limits](docs/DEPENDABILITY.md) and the [public verification record](docs/PUBLIC_DEPLOYMENT.md). The application includes a **Download offline HTML** button.
 
 ## Try the demo
 
@@ -45,9 +46,9 @@ The frozen synthetic-trained model flags 153 of 159 normal DNS flows in these ex
 
 For the original handshake demonstration, choose **Synthetic teaching sample**: 378 packets, 32 flows and 22 matching TCP handshakes. Select flow 2 to inspect a handshake, compare UDP traffic, then export CSV/JSON. **Download selected PCAP** provides the same packet bytes for Wireshark. Uploads accept classic PCAP up to 512 KiB; PCAPNG must first be converted to pcap. The app performs offline capture analysis, not automatic capture of browser or server network traffic.
 
-The **Live inference** view connects raw event submission, real model scoring, evidence inspection and server-side analyst feedback. See [backend setup and guarantees](docs/BACKEND.md). The original benchmark replay remains available in Alerts, Topology and Model audit.
+**Access-log replay** provides stored predictions, evidence inspection and local analyst dispositions. Topology and Model audit use the same bundled synthetic benchmark. The separate server-enabled build provides raw event submission and fresh UEBA predictions; see [backend setup and guarantees](docs/BACKEND.md).
 
-**Public full-stack demo:** [Open SentinelUEBA on Render](https://sentinelueba-harthik.onrender.com/#live). The [GitHub Pages demo](https://harthik777.github.io/CN-Project/#packets) analyzes packet captures locally even when the Render API is unavailable. Hosting works independently of the developer's computer. Render Free can sleep when idle; demo sessions use temporary disk and can be lost on sleep, restart or redeployment. Export evidence before leaving. See the [deployment record](docs/PUBLIC_DEPLOYMENT.md).
+Use the **[standalone public demo](https://harthik777.github.io/CN-Project/#packets)** for presentations and résumé links. The previous Render backend is retained for optional API experiments; it is not involved in any public-demo interaction. See the [deployment record](docs/PUBLIC_DEPLOYMENT.md).
 
 Open [the self-contained console](assets/SentinelUEBA-React-Console.html) in a modern browser. It needs no installation or internet. Download the HTML before opening it if viewing this README on GitHub.
 

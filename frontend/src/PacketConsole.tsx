@@ -10,6 +10,7 @@ import sampleCapture from "./data/sample-capture.json";
 import realCaptures from "./data/real-captures.json";
 
 const API = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
+const SERVER_ENABLED = import.meta.env.VITE_ENABLE_SERVER === "true";
 const KEY = `sentinel-packet-session-v1:${API || window.location.origin}`;
 const DOC = "https://github.com/Harthik777/CN-Project/blob/codex/full-stack/docs/PACKET_LAB.md";
 const CACHE_KEY = "sentinel-packet-report-v1";
@@ -74,7 +75,7 @@ export default function PacketConsole() {
     // A real local result is available before any network request. Invalid captures never replace the previous report.
     const local = await analyzeCapture(bytes,MODEL);
     setSelectedId(null); setCredential(null); clearResult(KEY); remember(local,"Browser inference");
-    if (mode === "browser" || window.location.protocol === "file:" || !navigator.onLine) {
+    if (!SERVER_ENABLED || mode === "browser" || window.location.protocol === "file:" || !navigator.onLine) {
       setNotice("Analysis completed on this device using the trained forest. No capture was uploaded."); return;
     }
     setBusy("Browser results ready. Checking the server for an optional SQL save…");
@@ -129,7 +130,7 @@ export default function PacketConsole() {
       <a className="packet-guide" href={DOC} target="_blank" rel="noreferrer">Packet lab & methodology ↗</a>
     </section>
     <div className="live-flow"><span>01 · Read PCAP headers</span><span>02 · Aggregate bidirectional flows</span><span>03 · Score 13 flow features</span><span>04 · Inspect + export evidence</span></div>
-    <div className="live-notice" role="status"><strong>{origin}</strong><p>Browser-only analysis is the default. Recorded CTU captures, a synthetic sample and the trained model are included in this page; new scores are computed on this device. Select Automatic mode only if you also want a server save.</p>
+    <div className="live-notice" role="status"><strong>{origin}</strong><p>Recorded CTU captures, a synthetic sample and the trained model are included in this page. Packet parsing and new scores are computed on this device. {SERVER_ENABLED ? "Browser-only analysis is the default. Select Automatic mode for an optional server save." : "No backend, sign-in or cloud session is needed."}</p>
       <p><a href="#alerts">Explore stored benchmark replay</a> · Browse precomputed synthetic access-log results without a server. This replay does not compute new access-log predictions.</p></div>
     {error && <div className="live-error" role="alert">{error}</div>}
     {(busy || notice) && <div className="live-notice" role="status">{busy || notice}</div>}
@@ -143,15 +144,15 @@ export default function PacketConsole() {
       </div>
       <p className="live-muted">{selectedDataset ? "Selected dataset: a real network recording excerpt with application payload contents removed. Original timestamps, headers and packet lengths are retained." : "Selected dataset: generated TCP/UDP conversations with staged unusual behavior."} Changing the selection does not replace your displayed report until you analyze it.</p>
       <div className="live-control-row">
-        <label>Analysis mode<select aria-label="Packet analysis mode" disabled={!!busy} value={mode} onChange={e => setMode(e.target.value as "auto" | "browser")}>
-          <option value="browser">Browser only: no upload</option><option value="auto">Automatic: browser + optional server save</option></select></label>
+        {SERVER_ENABLED && <label>Analysis mode<select aria-label="Packet analysis mode" disabled={!!busy} value={mode} onChange={e => setMode(e.target.value as "auto" | "browser")}>
+          <option value="browser">Browser only: no upload</option><option value="auto">Automatic: browser + optional server save</option></select></label>}
         <button className="live-primary" disabled={!!busy} onClick={() => void run("Reading and analyzing the selected dataset…", () => analyze(true))}><Play size={16}/>Analyze selected dataset</button>
-        <button disabled={!!busy || !credential} onClick={() => void run("Reading saved report…", () => refresh())}><RefreshCw size={15}/>Refresh saved report</button>
+        {SERVER_ENABLED && <button disabled={!!busy || !credential} onClick={() => void run("Reading saved report…", () => refresh())}><RefreshCw size={15}/>Refresh saved report</button>}
       </div>
       <div className="packet-upload"><label htmlFor="packet-capture">Analyze your capture<input id="packet-capture" type="file" accept=".pcap,.cap,application/vnd.tcpdump.pcap" disabled={!!busy} onChange={e => setFile(e.target.files?.[0] || null)}/></label>
         <button disabled={!!busy || !file} onClick={() => void run("Reading capture and extracting flows…", () => analyze(false))}><Upload size={15}/>{mode === "browser" ? "Analyze selected file" : "Upload and analyze"}</button></div>
       <p className="live-muted">Classic PCAP · up to 512 KiB / 6,000 packets / 250 flows · Ethernet, raw IP, Linux cooked v1 · IPv4 and IPv6. Convert PCAPNG using Wireshark Save As → pcap.</p>
-      <p className="live-muted">Automatic mode analyzes locally first and uploads to the server when reachable. Browser-only mode keeps the file on this device. Results contain headers and statistics, never payloads.</p>
+      <p className="live-muted">{SERVER_ENABLED ? "Automatic mode can upload the capture for a server save. " : "Your capture stays on this device. "}Results contain headers and statistics, never payloads.</p>
     </section>
     <section className="live-panel packet-provenance"><h3>Real dataset transfer check</h3>
       <p>{REAL.length} recorded-traffic excerpts contain {totalRealPackets.toLocaleString()} packets and {totalRealFlows.toLocaleString()} extracted flows. The existing model and threshold are frozen; these captures were not used for training or threshold selection.</p>
@@ -197,9 +198,9 @@ export default function PacketConsole() {
       <p>Synthetic test precision {(report.model.test_metrics.precision*100).toFixed(1)}% · recall {(report.model.test_metrics.recall*100).toFixed(1)}% · false-positive rate {(report.model.test_metrics.false_positive_rate*100).toFixed(1)}%. These results do not establish performance on operational traffic.</p>
       <details><summary>Analysis limits</summary>{report.limitations.map(text => <p className="live-muted" key={text}>{text}</p>)}</details>
     </section>}
-    <footer className="live-panel live-footer"><p>{stored ? "The latest report is stored in this browser for up to 7 days." : "No durable browser copy is available yet. Export important results."} Server sessions last up to 24 hours and may be lost after a restart. Browser copies are not server backups.</p><div className="live-control-row">
+    <footer className="live-panel live-footer"><p>{stored ? "The latest report is stored in this browser for up to 7 days." : "No durable browser copy is available yet. Export important results."} Browser storage can be cleared or evicted. Export results you want to keep.{SERVER_ENABLED && " Server sessions last up to 24 hours and may be lost after a restart."}</p><div className="live-control-row">
       <button disabled={!report} onClick={() => report && download(JSON.stringify({...report, execution: {description:origin}, dataset_provenance:datasetProvenance}, null, 2), "sentinel-packet-report.json", "application/json")}><Download size={15}/>Export report JSON</button>
       <button disabled={!report} onClick={exportCsv}><Download size={15}/>Export flows CSV</button>
-      <button disabled={!!busy} onClick={() => { clearResult(CACHE_KEY); clearResult(KEY); setReport(null); setCredential(null); setStored(false); setOrigin("Ready for browser analysis"); setNotice("Browser report and session connection cleared."); }}>Clear browser report</button></div></footer>
+      <button disabled={!!busy} onClick={() => { clearResult(CACHE_KEY); clearResult(KEY); setReport(null); setCredential(null); setStored(false); setOrigin("Ready for browser analysis"); setNotice("Browser report cleared."); }}>Clear browser report</button></div></footer>
   </main>;
 }

@@ -32,7 +32,7 @@ export default function OfflineTools() {
     } catch { setStatus("Download could not complete. Retry when this page is reachable."); }
     finally { setDownloading(false); }
   }
-  return <div className="offline-tools"><span role="status">{status}</span><div>
+  return <div className="offline-tools"><span role="status">{import.meta.env.VITE_ENABLE_SERVER !== "true" && <strong>Standalone demo · </strong>}{status}</span><div>
     {!isFile && <button disabled={downloading} onClick={() => void download()}>{downloading ? "Preparing download…" : "Download offline HTML"}</button>}
     {window.location.hostname !== "harthik777.github.io" && !isFile && <a href="https://harthik777.github.io/CN-Project/#packets">Independent demo page ↗</a>}
   </div></div>;

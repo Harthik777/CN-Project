@@ -3,6 +3,7 @@ import {
   Box,
   CheckCircle2,
   RotateCcw,
+  Rows3,
   ShieldAlert,
 } from "lucide-react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -13,7 +14,8 @@ import {
   PerspectiveCamera,
   QuadraticBezierLine,
 } from "@react-three/drei";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Component, useEffect, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import type { Mesh } from "three";
 import { MathUtils } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
@@ -44,6 +46,7 @@ interface TopologyEdge {
   target: TopologyNode;
   risk: number;
   events: number;
+  primaryAlertId: number;
 }
 
 interface TopologyGraph {
@@ -165,6 +168,7 @@ function buildGraph(data: DashboardData, policy: PolicyKey): TopologyGraph {
     const existing = edgeMap.get(id);
     if (existing) {
       existing.events += 1;
+      if (alert.risk > existing.risk) existing.primaryAlertId = alert.id;
       existing.risk = Math.max(existing.risk, alert.risk);
     } else {
       edgeMap.set(id, {
@@ -173,6 +177,7 @@ function buildGraph(data: DashboardData, policy: PolicyKey): TopologyGraph {
         target,
         risk: alert.risk,
         events: 1,
+        primaryAlertId: alert.id,
       });
     }
   }
@@ -471,6 +476,13 @@ function TopologyStat({
   );
 }
 
+class GraphicsBoundary extends Component<{children: ReactNode; onUnavailable: () => void}, {failed: boolean}> {
+  state = {failed:false};
+  static getDerivedStateFromError() { return {failed:true}; }
+  componentDidCatch() { this.props.onUnavailable(); }
+  render() { return this.state.failed ? null : this.props.children; }
+}
+
 export default function TopologyView({
   data,
   policy,
@@ -491,6 +503,9 @@ export default function TopologyView({
     [],
   );
   const [resetVersion, setResetVersion] = useState(0);
+  const [tableMode, setTableMode] = useState(false);
+  const [graphicsFailed, setGraphicsFailed] = useState(false);
+  const useTable = () => { setGraphicsFailed(true); setTableMode(true); };
   const topOneThreshold = data.operating_points.top_1pct.threshold;
 
   useEffect(() => {
@@ -502,10 +517,19 @@ export default function TopologyView({
   ).length;
   const hottestNode = [...graph.nodes].sort((a, b) => b.risk - a.risk)[0];
 
+  if (tableMode) return <main className="live-workspace view-enter">
+    <section className="live-intro"><div><div className="eyebrow">STORED SYNTHETIC ACCESS-LOG RESULTS</div><h2>Entity-resource connections</h2>
+      <p>{graph.nodes.length} principals and resources · {graph.edges.length} observed links at the selected policy threshold.</p>
+      {graphicsFailed && <p>3D graphics are unavailable on this device. All connections remain accessible in this table.</p>}</div>
+      {!graphicsFailed && <button onClick={() => setTableMode(false)}>Show 3D topology</button>}</section>
+    <section className="live-panel live-events"><h3>Observed connections</h3><div className="live-table-scroll"><table><thead><tr><th>Principal</th><th>Resource</th><th>Events</th><th>Risk</th><th>Evidence</th></tr></thead>
+      <tbody>{graph.edges.map(edge => <tr key={edge.id}><td>{edge.source.label}</td><td>{edge.target.label}</td><td>{edge.events}</td><td>{riskText(edge.risk)}</td><td><button onClick={() => onInvestigate(edge.primaryAlertId)}>Investigate {edge.source.label}</button></td></tr>)}</tbody></table></div></section>
+  </main>;
+
   return (
     <main className="topology-view view-enter">
       <div className="topology-canvas" data-testid="topology-canvas">
-        <Canvas
+        <GraphicsBoundary onUnavailable={useTable}><Canvas
           dpr={[1, 1.65]}
           gl={{
             antialias: true,
@@ -523,7 +547,7 @@ export default function TopologyView({
             topOneThreshold={topOneThreshold}
             motionEnabled={!reduceMotion}
           />
-        </Canvas>
+        </Canvas></GraphicsBoundary>
       </div>
 
       <header className="topology-heading">
@@ -543,6 +567,7 @@ export default function TopologyView({
       </div>
 
       <div className="topology-controls">
+        <button type="button" onClick={() => setTableMode(true)} aria-label="Show topology table" title="Show topology table"><Rows3 size={16}/></button>
         <button
           type="button"
           onClick={() => setResetVersion((value) => value + 1)}

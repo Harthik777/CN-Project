@@ -1,6 +1,18 @@
 # Three-minute internship demo
 
-## Connected backend demonstration
+## Recommended public demonstration: no backend required
+
+Open [Packet analysis](https://harthik777.github.io/CN-Project/#packets). Download the offline HTML before presenting.
+
+1. **First minute:** analyze the default recorded DNS excerpt. Show 200 packets, 54 bidirectional flows, UDP headers, source attribution and the capture hash. Explain that these scores are computed locally when clicked. Acknowledge that 51 flows are flagged by the synthetic-trained model, exposing poor transfer to normal DNS.
+2. **Second minute:** choose **Synthetic teaching sample**, analyze it, and inspect flow 2's SYN, SYN-ACK and matching ACK. Explain sequence acknowledgement, five-tuples, timing and the difference from UDP. Export the flow CSV or report JSON.
+3. **Third minute:** open **Access-log replay** (or **Alerts** in the mobile navigation), inspect an event, save a local disposition, and show **Model audit**. Explain that these access-log predictions are stored synthetic results. Use **Topology** and its table view to show connections. Discuss both the original synthetic test and the real-data transfer finding without claiming operational attack accuracy.
+
+The public demo never creates cloud sessions or contacts Render. New access-log inference and SQL experiments are separate repository capabilities. Packet model training is unchanged by this presentation update.
+
+## Optional server-enabled demonstration
+
+The following exercise requires the separate backend build. **Live inference** is excluded from the standalone public demo.
 
 Open **Live inference**, create a session, select **Score baseline**, then **Score attack campaign**. Inspect event 167: the model reports credential stuffing with evidence of twelve accounts sharing a source with a high failure rate. Save a disposition, refresh server state, and show the retained review history. Export the evidence JSON. Explain that these are new server-computed scores for synthetic inputs, and that the coverage policy also flags baseline false positives. The API currently uses bounded event-log replay, not a high-throughput stream processor. Hosting status and availability are in [PUBLIC_DEPLOYMENT.md](PUBLIC_DEPLOYMENT.md).
 

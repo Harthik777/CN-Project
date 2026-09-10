@@ -1,0 +1,19 @@
+name: Verify standalone demo
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  standalone:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python scripts/verify_standalone_demo.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: standalone-demo-evidence
+          path: output/public-standalone.json

@@ -4,6 +4,14 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import { apiRequest, ApiError, ConnectionError } from '../src/api.ts';
 import { readResult, saveResult, clearResult } from '../src/result-cache.ts';
+import { resolveView } from '../src/navigation.ts';
+
+test('standalone deep links never enter the cloud inference view', () => {
+  assert.equal(resolveView('#live',false),'alerts');
+  assert.equal(resolveView('#live',true),'live');
+  for (const view of ['packets','alerts','topology','evaluation']) assert.equal(resolveView(`#${view}`,false),view);
+  for (const hash of ['', '#missing']) assert.equal(resolveView(hash,false),'packets');
+});
 
 test('safe reads recover from a temporary failure; writes are never repeated',async () => {
   const original=globalThis.fetch;

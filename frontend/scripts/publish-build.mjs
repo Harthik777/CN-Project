@@ -14,6 +14,13 @@ const destinations = [
 ];
 
 await stat(source);
+const html = await readFile(source, "utf8");
+if (process.env.VITE_ENABLE_SERVER !== "true") {
+  for (const marker of ["/api/health", "/api/sessions", "sentinelueba-harthik.onrender.com", "Connecting to inference API", "Refresh saved report", "Score baseline", "Save to server"]) {
+    if (html.includes(marker)) throw new Error(`Standalone build contains a cloud dependency: ${marker}`);
+  }
+  if (!html.replaceAll("&#39;", "'").includes("connect-src 'self'") || !html.includes("Standalone demo")) throw new Error("Standalone build is missing its network boundary or mode label");
+}
 for (const destination of destinations) {
   await copyFile(source, destination);
   console.log(`[frontend] published ${path.relative(projectDirectory, destination)}`);
