@@ -5,6 +5,7 @@ RUN cd frontend && npm ci
 COPY frontend ./frontend
 COPY assets/dashboard_data.json ./assets/dashboard_data.json
 COPY artifacts/packet_flow/browser_model.json artifacts/packet_flow/sample_capture.pcap ./artifacts/packet_flow/
+COPY artifacts/real_captures ./artifacts/real_captures
 RUN cd frontend && npm run build
 
 FROM python:3.11-slim

@@ -22,6 +22,8 @@ def fixtures():
     ack = frame(a,b,1,2,flags=16,seq=101,ack=201)
     records = [(1000,syn),(1000.02,synack),(1000.03,ack)]
     yield "sample", (ARTIFACTS / "sample_capture.pcap").read_bytes()
+    for path in sorted((ROOT / "artifacts" / "real_captures").glob("*.pcap")):
+        yield f"real-{path.stem}", path.read_bytes()
     for seed in list(range(1000,1020)) + list(range(2000,2008)) + list(range(3000,3008)):
         yield f"capture-{seed}", make_capture(seed, seed >= 3000)[0]
     for endian in ("<",">"):

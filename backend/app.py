@@ -24,7 +24,7 @@ from backend.packets import CaptureError, MAX_CAPTURE_BYTES, MAX_FLOWS, MAX_PACK
 
 ROOT = Path(__file__).resolve().parent.parent
 log = logging.getLogger("sentinel.api")
-API_VERSION = "4.1.0"
+API_VERSION = "4.2.0"
 
 
 class ModelScorer:

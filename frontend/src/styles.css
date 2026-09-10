@@ -3117,6 +3117,8 @@ details:not([open]) > summary.section-title {
   .application-surface > .live-workspace { flex: 1; min-height: 0; height: auto; }
 }
 .live-notice p { margin: 6px 0 0; }
+.packet-workspace select { max-width: 100%; min-width: 0; }
+.packet-hash { overflow-wrap: anywhere; }
 .live-error { color: #fecaca; background: #3b1b28; border: 1px solid #7f3440; }
 .live-notice { color: #bfdbfe; background: #142c47; border: 1px solid #244b76; }
 @media (max-width: 1100px) { .live-workspace { padding: 20px 16px 80px; } .live-investigation { grid-template-columns: 1fr; } }

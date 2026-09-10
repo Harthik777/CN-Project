@@ -2,7 +2,7 @@
 
 Use **https://harthik777.github.io/CN-Project/#packets** as the primary project link. Render remains the optional packet SQL backend and the required access-log inference backend. This release adds actual browser packet inference, not prerecorded results presented as live inference.
 
-Packet analysis starts in **Browser only: no upload** mode on every page load. The bundled synthetic capture is stored with the application, and its packet features and model scores are computed when you run it. Automatic mode is an explicit choice for an optional server save. The packet page also links directly to the bundled, precomputed synthetic access-log benchmark replay. A real capture can be selected for browser analysis, but this does not change the model's synthetic training and evaluation provenance.
+Packet analysis starts in **Browser only: no upload** mode on every page load. Six [recorded CTU excerpts](REAL_DATA.md) and the synthetic teaching capture are stored with the application; packet features and model scores are computed when you run one. Automatic mode is an explicit choice for an optional server save. The packet page also links directly to the bundled, precomputed synthetic access-log benchmark replay. Recorded captures do not change the model's synthetic training provenance; the app separately shows its poor transfer to normal DNS.
 
 ## What happens during an outage
 
@@ -36,9 +36,9 @@ npm test
 npm run build
 ```
 
-The differential check compares **130 captures**: 101 accepted, 29 rejected; **1,050 flows** with matching flags and a maximum measured score difference of **1.1102230246251565e-16**. It includes the 36 training/validation/test captures, the separate sample, endian/timestamp variants, IPv6, VLAN/raw/cooked links, malformed lengths, sequence wraparound, partial handshakes, flow limits and deterministic byte mutations. This establishes implementation parity, not real-world detection accuracy.
+The differential check compares **136 captures**: 107 accepted, 29 rejected; **1,244 flows** with matching flags and a maximum measured score difference of **1.1102230246251565e-16**. It includes six recorded CTU excerpts, the 36 training/validation/test captures, the separate sample, endian/timestamp variants, IPv6, VLAN/raw/cooked links, malformed lengths, sequence wraparound, partial handshakes, flow limits and deterministic byte mutations. This establishes implementation parity, not real-world detection accuracy.
 
-Five JavaScript resilience tests cover safe GET retry, no automatic POST retry, non-retryable HTTP errors, aborts/startup HTML, corrupt/expired/unavailable browser storage, and service-worker outage recovery with API exclusion. The Python suite has **67 tests**, including API health uptime, compressed HTML delivery and service-worker response headers.
+Five JavaScript resilience tests cover safe GET retry, no automatic POST retry, non-retryable HTTP errors, aborts/startup HTML, corrupt/expired/unavailable browser storage, and service-worker outage recovery with API exclusion. The Python suite has **71 tests**, including public-capture provenance/redaction checks, API health uptime, compressed HTML delivery and service-worker response headers.
 
 Browser outage exercise: start a local production build/API, save a packet report and score 120 synthetic access events; stop the server; reload the page; confirm the 120-event copy is read-only and exportable; analyze a separately generated PCAP entirely locally; export it and reload again. The additional capture has SHA-256 `1b75d0142efe76e2a41aefb8c77d8ff966d42935e7c6f5851b4c242685ece2d7`, 378 packets, 32 flows, 22 handshakes and 9 flagged flows, matching Python.
 

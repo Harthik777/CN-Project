@@ -4,7 +4,7 @@ The packet lab also runs entirely in your browser when the server is unavailable
 
 Owner: **Harthik M V**. This extension adds packet-level Computer Networks work and a separate ML/data pipeline to SentinelUEBA.
 
-Public entry: [Packet analysis](https://sentinelueba-harthik.onrender.com/#packets). Select **Analyze sample capture**, inspect a flow, then export JSON or CSV. A sample download lets an examiner inspect the exact same packet bytes in Wireshark. The sample is constructed traffic using documentation-only addresses; it is not a live network recording.
+Public entry: [Packet analysis](https://harthik777.github.io/CN-Project/#packets). Choose a **Bundled dataset** and select **Analyze selected dataset**, inspect a flow, then export JSON or CSV. Recorded DNS and botnet-host excerpts are documented in [REAL_DATA.md](REAL_DATA.md), including provenance, redaction and the model's poor transfer to normal DNS. **Synthetic teaching sample** retains the constructed handshake demonstration using documentation-only addresses. Download selected PCAP lets an examiner inspect the exact same packet bytes in Wireshark.
 
 ## Architecture
 
@@ -39,7 +39,7 @@ Classic PCAP 2.4 supports both byte orders and microsecond/nanosecond records. T
 1. `GET /api/packets/sample` downloads the bundled PCAP; `GET /api/packets/model` exposes its manifest and model metadata.
 2. `POST /api/sessions` creates a capability-token session. Use the returned token in an Authorization Bearer header.
 3. `POST /api/sessions/{id}/capture` accepts the raw file as `application/vnd.tcpdump.pcap` (a binary request body, not multipart form data).
-4. `GET /api/sessions/{id}/capture` reads the persisted report. The UI reads this endpoint after upload, rather than displaying an optimistic local result.
+4. `GET /api/sessions/{id}/capture` reads the persisted report. Browser-only mode computes locally without API requests. Automatic mode first displays browser inference and then confirms an optional server save through this readback endpoint.
 
 The `captures` table stores a file SHA-256, model/extractor identity and summary. `capture_flows` stores typed, queryable endpoints, protocol, packet/byte counts, duration, scores and bounded header evidence. A transaction commits both tables together. Repeating the same capture/model pair is idempotent; a conflicting capture or model returns HTTP 409 and requires a new session. Rejected captures leave no partial records. The global lock serializes analysis with the original model service and limits simultaneous model memory use. This design is for a small public demo, not a throughput claim.
 
@@ -85,7 +85,7 @@ Train into an output directory for review before replacing the packaged artifact
 
 ## Three-minute CN demonstration
 
-1. Open Packet analysis and analyze the bundled sample: **378 packets, 32 flows and 22 matching TCP handshakes**.
+1. Open Packet analysis, choose **Synthetic teaching sample**, then **Analyze selected dataset**: **378 packets, 32 flows and 22 matching TCP handshakes**. For recorded traffic, choose a CTU excerpt and explain the separately displayed transfer limitations.
 2. Select a completed TCP flow (for example flow 2). Identify its source/destination ports and SYN, SYN-ACK and ACK packet numbers. Explain why acknowledgement values matter.
 3. Select a UDP flow and explain the absence of a TCP-style handshake. Compare packet counts, timing and directionality for ordinary and burst flows.
 4. Inspect a flagged flow, expand its 13 features and state that the score measures deviation from a synthetic baseline. A flagged flow is a review candidate.

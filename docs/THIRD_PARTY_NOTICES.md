@@ -1,5 +1,15 @@
 # Retained component notices
 
+## Public capture datasets
+
+The files under `artifacts/real_captures/` are modified, payload-redacted excerpts of public Stratosphere Laboratory captures. The bundled UI and JSON exports retain dataset attribution. See [REAL_DATA.md](REAL_DATA.md) and the dataset manifest for source hashes, modifications and usage terms.
+
+Normal DNS capture: Garcia, Sebastian. Malware Capture Facility Project. Stratosphere Laboratory. [Publisher usage FAQ](https://www.stratosphereips.org/datasets-faq).
+
+CTU-13 scenario 7: Garcia, S., Grill, M., Stiborek, J., and Zunino, A. (2014). An empirical comparison of botnet detection methods. Computers & Security 45, 100-123. https://doi.org/10.1016/j.cose.2014.05.011. The [publisher](https://www.stratosphereips.org/datasets-overview) distributes CTU-13 under Creative Commons Attribution (CC-BY).
+
+## Retained UEBA components
+
 The following notice applies to the retained SentinelUEBA baseline components and pretrained UEBA artifacts identified in PROVENANCE.md. The packet-flow extension is documented separately there.
 
 MIT License

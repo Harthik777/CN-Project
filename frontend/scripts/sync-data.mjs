@@ -25,3 +25,13 @@ const model = JSON.parse(browserModel);
 if (createHash("sha256").update(sample).digest("hex") !== model.sample_sha256) throw new Error("Bundled capture does not match browser model manifest");
 await writeFile(path.join(destinationDirectory, "browser-model.json"), browserModel);
 await writeFile(path.join(destinationDirectory, "sample-capture.json"), JSON.stringify({base64: sample.toString("base64")}));
+
+const realDirectory = path.join(projectDirectory, "artifacts", "real_captures");
+const real = JSON.parse(await readFile(path.join(realDirectory, "manifest.json"), "utf8"));
+if (real.model_id !== model.model.model_id) throw new Error("Real-capture evaluation uses a different flow model");
+for (const capture of real.captures) {
+  const data = await readFile(path.join(realDirectory, capture.file));
+  if (createHash("sha256").update(data).digest("hex") !== capture.sha256) throw new Error("Real capture hash mismatch");
+  capture.base64 = data.toString("base64");
+}
+await writeFile(path.join(destinationDirectory, "real-captures.json"), JSON.stringify(real));

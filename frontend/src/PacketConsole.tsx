@@ -7,6 +7,7 @@ import type { BrowserModel, Flow, Report } from "./packet-engine";
 import { clearResult, readResult, saveResult } from "./result-cache";
 import browserModel from "./data/browser-model.json";
 import sampleCapture from "./data/sample-capture.json";
+import realCaptures from "./data/real-captures.json";
 
 const API = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
 const KEY = `sentinel-packet-session-v1:${API || window.location.origin}`;
@@ -14,6 +15,7 @@ const DOC = "https://github.com/Harthik777/CN-Project/blob/codex/full-stack/docs
 const CACHE_KEY = "sentinel-packet-report-v1";
 const MODEL = browserModel as BrowserModel;
 const SAMPLE_URL = `data:application/vnd.tcpdump.pcap;base64,${sampleCapture.base64}`;
+const REAL = realCaptures.captures;
 
 function saved(): Credential | null {
   try { const item = JSON.parse(localStorage.getItem(KEY) || "null"); return item?.session_id && item?.token ? item : null; }
@@ -36,6 +38,7 @@ export default function PacketConsole() {
   const [report, setReport] = useState<Report | null>(initial?.data || null);
   const [origin, setOrigin] = useState(initial ? `Browser copy · ${initial.source} · saved ${new Date(initial.saved_at).toLocaleString()}` : "Ready for browser analysis");
   const [mode, setMode] = useState<"auto" | "browser">("browser");
+  const [dataset, setDataset] = useState("normal-dns-start");
   const [stored, setStored] = useState(!!initial);
   const [file, setFile] = useState<File | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -66,7 +69,8 @@ export default function PacketConsole() {
   }
   async function analyze(sample: boolean) {
     if (!sample && (!file || !file.size || file.size > 512*1024)) throw new Error("Select a classic PCAP capture up to 512 KiB.");
-    const bytes = sample ? Uint8Array.from(atob(sampleCapture.base64),c => c.charCodeAt(0)) : new Uint8Array(await file!.arrayBuffer());
+    const encoded = dataset === "synthetic" ? sampleCapture.base64 : REAL.find(c => c.id === dataset)!.base64;
+    const bytes = sample ? Uint8Array.from(atob(encoded),c => c.charCodeAt(0)) : new Uint8Array(await file!.arrayBuffer());
     // A real local result is available before any network request. Invalid captures never replace the previous report.
     const local = await analyzeCapture(bytes,MODEL);
     setSelectedId(null); setCredential(null); clearResult(KEY); remember(local,"Browser inference");
@@ -101,6 +105,17 @@ export default function PacketConsole() {
   const visible = onlyAlerts ? flows.filter(f => f.is_alert) : flows;
   const selected = flows.find(f => f.flow_id === selectedId) || flows[0];
   const summary = report?.summary;
+  const totalRealPackets = REAL.reduce((sum,c) => sum+c.summary.parsed_packets,0);
+  const totalRealFlows = REAL.reduce((sum,c) => sum+c.summary.flows,0);
+  const selectedDataset = REAL.find(c => c.id === dataset);
+  const reportDataset = REAL.find(c => c.sha256 === summary?.capture_sha256);
+  const reportSource = realCaptures.sources.find(s => s.id === reportDataset?.source_id);
+  const downloadUrl = selectedDataset ? `data:application/vnd.tcpdump.pcap;base64,${selectedDataset.base64}` : SAMPLE_URL;
+  const datasetProvenance = reportDataset && reportSource ? {
+    capture: reportDataset.title, source: reportSource, source_packet_numbers: reportDataset.source_packet_numbers,
+    derived_capture_sha256: reportDataset.sha256, modification: realCaptures.modification,
+    label_scope: realCaptures.label_scope,
+  } : null;
   function exportCsv() {
     if (!report) return;
     const columns: (keyof Flow)[] = ["flow_id", "ip_version", "source_ip", "source_port", "destination_ip", "destination_port", "protocol", "packets", "ip_bytes", "payload_bytes", "duration_ms", "iat_mean_ms", "forward_packets", "reverse_packets", "anomaly_score", "is_alert"];
@@ -114,22 +129,39 @@ export default function PacketConsole() {
       <a className="packet-guide" href={DOC} target="_blank" rel="noreferrer">Packet lab & methodology ↗</a>
     </section>
     <div className="live-flow"><span>01 · Read PCAP headers</span><span>02 · Aggregate bidirectional flows</span><span>03 · Score 13 flow features</span><span>04 · Inspect + export evidence</span></div>
-    <div className="live-notice" role="status"><strong>{origin}</strong><p>Browser-only analysis is the default. The bundled synthetic PCAP and trained model are included in this page; new scores are computed on this device. Select Automatic mode only if you also want a server save.</p>
+    <div className="live-notice" role="status"><strong>{origin}</strong><p>Browser-only analysis is the default. Recorded CTU captures, a synthetic sample and the trained model are included in this page; new scores are computed on this device. Select Automatic mode only if you also want a server save.</p>
       <p><a href="#alerts">Explore stored benchmark replay</a> · Browse precomputed synthetic access-log results without a server. This replay does not compute new access-log predictions.</p></div>
     {error && <div className="live-error" role="alert">{error}</div>}
     {(busy || notice) && <div className="live-notice" role="status">{busy || notice}</div>}
     <section className="live-panel">
       <div className="live-control-row">
+        <label>Bundled dataset<select aria-label="Bundled packet dataset" disabled={!!busy} value={dataset} onChange={e => setDataset(e.target.value)}>
+          {REAL.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
+          <option value="synthetic">Synthetic teaching sample</option>
+        </select></label>
+        <a href={downloadUrl} download={selectedDataset ? `${selectedDataset.id}-payload-redacted.pcap` : "sentinel-synthetic-sample.pcap"}>Download selected PCAP</a>
+      </div>
+      <p className="live-muted">{selectedDataset ? "Selected dataset: a real network recording excerpt with application payload contents removed. Original timestamps, headers and packet lengths are retained." : "Selected dataset: generated TCP/UDP conversations with staged unusual behavior."} Changing the selection does not replace your displayed report until you analyze it.</p>
+      <div className="live-control-row">
         <label>Analysis mode<select aria-label="Packet analysis mode" disabled={!!busy} value={mode} onChange={e => setMode(e.target.value as "auto" | "browser")}>
           <option value="browser">Browser only: no upload</option><option value="auto">Automatic: browser + optional server save</option></select></label>
-        <button className="live-primary" disabled={!!busy} onClick={() => void run("Reading and analyzing the sample capture…", () => analyze(true))}><Play size={16}/>Analyze sample capture</button>
-        <a href={SAMPLE_URL} download="sentinel-synthetic-sample.pcap">Download sample PCAP</a>
+        <button className="live-primary" disabled={!!busy} onClick={() => void run("Reading and analyzing the selected dataset…", () => analyze(true))}><Play size={16}/>Analyze selected dataset</button>
         <button disabled={!!busy || !credential} onClick={() => void run("Reading saved report…", () => refresh())}><RefreshCw size={15}/>Refresh saved report</button>
       </div>
       <div className="packet-upload"><label htmlFor="packet-capture">Analyze your capture<input id="packet-capture" type="file" accept=".pcap,.cap,application/vnd.tcpdump.pcap" disabled={!!busy} onChange={e => setFile(e.target.files?.[0] || null)}/></label>
         <button disabled={!!busy || !file} onClick={() => void run("Reading capture and extracting flows…", () => analyze(false))}><Upload size={15}/>{mode === "browser" ? "Analyze selected file" : "Upload and analyze"}</button></div>
       <p className="live-muted">Classic PCAP · up to 512 KiB / 6,000 packets / 250 flows · Ethernet, raw IP, Linux cooked v1 · IPv4 and IPv6. Convert PCAPNG using Wireshark Save As → pcap.</p>
-      <p className="live-muted">Automatic mode analyzes locally first and uploads to the server when reachable. Browser-only mode keeps the file on this device. Results contain headers and statistics, never payloads. The bundled sample is generated traffic.</p>
+      <p className="live-muted">Automatic mode analyzes locally first and uploads to the server when reachable. Browser-only mode keeps the file on this device. Results contain headers and statistics, never payloads.</p>
+    </section>
+    <section className="live-panel packet-provenance"><h3>Real dataset transfer check</h3>
+      <p>{REAL.length} recorded-traffic excerpts contain {totalRealPackets.toLocaleString()} packets and {totalRealFlows.toLocaleString()} extracted flows. The existing model and threshold are frozen; these captures were not used for training or threshold selection.</p>
+      <div className="live-table-scroll"><table><thead><tr><th>Source context</th><th>Excerpts</th><th>Flows</th><th>Flagged by synthetic baseline</th></tr></thead><tbody>
+        {realCaptures.sources.map(source => { const captures = REAL.filter(c => c.source_id === source.id), count = captures.reduce((sum,c) => sum+c.summary.flows,0), flagged = captures.reduce((sum,c) => sum+c.summary.flagged_flows,0); return <tr key={source.id}><td><a href={source.source_page} target="_blank" rel="noreferrer">{source.title}</a></td><td>{captures.length}</td><td>{count}</td><td>{flagged} / {count} ({(100*flagged/count).toFixed(1)}%)</td></tr>; })}
+      </tbody></table></div>
+      <p><strong>The model overflags normal DNS traffic.</strong> These flag rates show limited transfer from synthetic training. They are not attack precision or recall. Capture context is not a verified label for every flow.</p>
+      <details><summary>Sources, preparation and evaluation limits</summary><p>{realCaptures.selection}</p><p>{realCaptures.modification}</p><p>{realCaptures.label_scope}</p><p>{realCaptures.limitation}</p>
+        {realCaptures.sources.map(source => <p key={source.id}>{source.citation} <a href={source.source_page} target="_blank" rel="noreferrer">Dataset source</a> · <a href={source.terms_url} target="_blank" rel="noreferrer">Usage terms</a><br/>Original source SHA-256: <span className="packet-hash">{source.sha256}</span></p>)}
+      </details>
     </section>
     <div className="live-metrics">
       <div><span>PARSED PACKETS</span><strong>{summary?.parsed_packets ?? "0"}</strong><small>{summary ? `${summary.skipped_packets} skipped / ${summary.packet_records} records` : "TCP and UDP packet headers"}</small></div>
@@ -160,12 +192,13 @@ export default function PacketConsole() {
     {selected && <section className="live-panel live-events packet-headers"><h3>Flow {selected.flow_id}: first {selected.packet_preview.length} packet headers</h3><p className="live-muted">All packets contribute to flow statistics. This preview retains at most 12 headers per flow. Forward means the first observed sender.</p>
       <div className="live-table-scroll"><table><thead><tr><th>Packet</th><th>Direction</th><th>Offset (ms)</th><th>Flags</th><th>Sequence</th><th>Acknowledgement</th><th>IP / payload bytes</th><th>TTL / hop limit</th></tr></thead><tbody>{selected.packet_preview.map(p => <tr key={p.packet_number}><td>#{p.packet_number}</td><td>{p.direction}</td><td>{p.offset_ms.toFixed(3)}</td><td>{p.flags || "n/a"}</td><td>{p.seq ?? "n/a"}</td><td>{p.ack ?? "n/a"}</td><td>{p.ip_bytes} / {p.payload_bytes}</td><td>{p.ttl}</td></tr>)}</tbody></table></div></section>}
     {report && <section className="live-panel packet-provenance"><h3>Capture provenance & model evaluation</h3><dl className="live-evidence"><dt>Capture SHA-256</dt><dd>{summary?.capture_sha256}</dd><dt>Capture interval (UTC)</dt><dd>{summary?.start_utc} to {summary?.end_utc}</dd><dt>Protocol packet counts</dt><dd>{Object.entries(summary?.protocols || {}).map(([key, count]) => `${key}: ${count}`).join(" · ")}</dd><dt>Skipped packet accounting</dt><dd>{JSON.stringify(summary?.skipped_by_reason)} · {summary?.out_of_order_records} out-of-order records sorted by timestamp</dd><dt>Model / extractor identity</dt><dd>{report.model.model_id}</dd></dl>
+      {reportDataset && reportSource && <p><strong>Recorded dataset: {reportDataset.title}.</strong> {reportSource.context}. Payload-redacted excerpt from source records {reportDataset.source_packet_numbers[0]} through {reportDataset.source_packet_numbers[reportDataset.source_packet_numbers.length-1]}. <a href={reportSource.source_page} target="_blank" rel="noreferrer">Original dataset and attribution</a>. The synthetic evaluation below describes the model's original test split, not this capture.</p>}
       <p>Isolation Forest · {report.model.train_flows} training flows · {report.model.validation_flows} validation flows · {report.model.test_flows} test flows from separate synthetic captures.</p>
       <p>Synthetic test precision {(report.model.test_metrics.precision*100).toFixed(1)}% · recall {(report.model.test_metrics.recall*100).toFixed(1)}% · false-positive rate {(report.model.test_metrics.false_positive_rate*100).toFixed(1)}%. These results do not establish performance on operational traffic.</p>
       <details><summary>Analysis limits</summary>{report.limitations.map(text => <p className="live-muted" key={text}>{text}</p>)}</details>
     </section>}
     <footer className="live-panel live-footer"><p>{stored ? "The latest report is stored in this browser for up to 7 days." : "No durable browser copy is available yet. Export important results."} Server sessions last up to 24 hours and may be lost after a restart. Browser copies are not server backups.</p><div className="live-control-row">
-      <button disabled={!report} onClick={() => report && download(JSON.stringify({...report, execution: {description:origin}}, null, 2), "sentinel-packet-report.json", "application/json")}><Download size={15}/>Export report JSON</button>
+      <button disabled={!report} onClick={() => report && download(JSON.stringify({...report, execution: {description:origin}, dataset_provenance:datasetProvenance}, null, 2), "sentinel-packet-report.json", "application/json")}><Download size={15}/>Export report JSON</button>
       <button disabled={!report} onClick={exportCsv}><Download size={15}/>Export flows CSV</button>
       <button disabled={!!busy} onClick={() => { clearResult(CACHE_KEY); clearResult(KEY); setReport(null); setCredential(null); setStored(false); setOrigin("Ready for browser analysis"); setNotice("Browser report and session connection cleared."); }}>Clear browser report</button></div></footer>
   </main>;

@@ -30,7 +30,7 @@ The live console exposes source-IP fan-out, failure ratio and activity windows. 
 ## Dependable demonstration
 
 - Packet analysis computes a real local result first. Automatic mode additionally saves to SQL when the server is reachable; Browser only mode never uploads the capture.
-- The browser and Python implementations are compared over 130 captures, including malformed inputs, and 1,050 flows. Their scores agree within 1e-12 with matching alert decisions.
+- The browser and Python implementations are compared over 136 captures, including six real-traffic excerpts and malformed inputs, and 1,244 flows. Their scores agree within 1e-12 with matching alert decisions.
 - A service worker caches the application shell after a successful visit. Download offline HTML for a presentation that does not depend on reaching either host.
 - The latest packet report and live-event result are retained separately in this browser for up to seven days, with export and clear controls. These are browser copies, not replicated server storage.
 - Access-log inference still requires Render; saved results remain read-only when disconnected, and the bundled Alerts replay is available.
@@ -39,7 +39,11 @@ Packet analysis defaults to **Browser only: no upload**. Download the [self-cont
 
 ## Try the demo
 
-**[Open Packet analysis](https://harthik777.github.io/CN-Project/#packets)** and select **Analyze sample capture**. The sample contains 378 packets, 32 flows and 22 matching TCP handshakes. Select flow 2 to inspect a handshake, compare UDP traffic, then export CSV/JSON. The same sample can be downloaded and opened in Wireshark. Uploads accept classic PCAP up to 512 KiB; PCAPNG must first be converted to pcap. The app performs offline capture analysis, not automatic capture of browser or server network traffic.
+**[Open Packet analysis](https://harthik777.github.io/CN-Project/#packets)**, choose a **Bundled dataset**, and select **Analyze selected dataset**. Six recorded CTU excerpts contribute 1,200 packets and 194 flows. Source hashes, packet selection and payload redaction are documented in [REAL_DATA.md](docs/REAL_DATA.md). They are stored with the application and require no live dataset download.
+
+The frozen synthetic-trained model flags 153 of 159 normal DNS flows in these excerpts, demonstrating poor transfer to this real traffic. The app exposes this limitation and does not claim real-data attack accuracy. Recorded data is now available for inspection; the model has not been retrained on it.
+
+For the original handshake demonstration, choose **Synthetic teaching sample**: 378 packets, 32 flows and 22 matching TCP handshakes. Select flow 2 to inspect a handshake, compare UDP traffic, then export CSV/JSON. **Download selected PCAP** provides the same packet bytes for Wireshark. Uploads accept classic PCAP up to 512 KiB; PCAPNG must first be converted to pcap. The app performs offline capture analysis, not automatic capture of browser or server network traffic.
 
 The **Live inference** view connects raw event submission, real model scoring, evidence inspection and server-side analyst feedback. See [backend setup and guarantees](docs/BACKEND.md). The original benchmark replay remains available in Alerts, Topology and Model audit.
 
