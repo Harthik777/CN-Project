@@ -4,7 +4,7 @@
 
 A modified personal project connecting Computer Networks, machine learning and data engineering. Upload a packet capture, decode IPv4/IPv6 TCP/UDP headers, reconstruct bidirectional flows, inspect matching TCP handshakes, and score 13 flow features with a separately trained Isolation Forest. A second pipeline ingests network-access logs, computes behavioural risk scores and preserves analyst decisions. Both pipelines use FastAPI, React, isolated sessions and transactional SQLite storage.
 
-**Standalone demo:** the [v4.3.0 presentation release](https://github.com/Harthik777/CN-Project/releases/tag/v4.3.0) runs entirely in the browser. It includes fresh PCAP analysis with the trained flow model, stored access-log replay, analyst reviews, topology and model audit. It makes no Render API calls and needs no cloud session. The separate Python backend and its networking experiments remain available in the repository. **Publishing status:** the [GitHub Pages update](docs/PUBLIC_DEPLOYMENT.md) is pending after a deployment timeout; use the downloadable release for the verified standalone build.
+**Standalone demo:** the [public GitHub Pages application](https://harthik777.github.io/CN-Project/#packets) and [v4.3.0 presentation release](https://github.com/Harthik777/CN-Project/releases/tag/v4.3.0) run entirely in the browser. They include fresh PCAP analysis with the trained flow model, stored access-log replay, analyst reviews, topology and model audit. They make no Render API calls and need no cloud session. The separate Python backend and its networking experiments remain available in the repository. [Public deployment verification passed](docs/PUBLIC_DEPLOYMENT.md).
 
 ## ML and data engineering focus
 
