@@ -4,7 +4,7 @@
 
 A modified personal project connecting Computer Networks, machine learning and data engineering. Upload a packet capture, decode IPv4/IPv6 TCP/UDP headers, reconstruct bidirectional flows, inspect matching TCP handshakes, and score 13 flow features with a separately trained Isolation Forest. A second pipeline ingests network-access logs, computes behavioural risk scores and preserves analyst decisions. Both pipelines use FastAPI, React, isolated sessions and transactional SQLite storage.
 
-**Public demo:** the [GitHub Pages application](https://harthik777.github.io/CN-Project/#packets) runs entirely in the browser. It includes fresh PCAP analysis with the trained flow model, stored access-log replay, analyst reviews, topology and model audit. It makes no Render API calls and needs no cloud session. The application can be cached or downloaded for offline presentations. The separate Python backend and its networking experiments remain available in the repository.
+**Standalone demo:** the [v4.3.0 presentation release](https://github.com/Harthik777/CN-Project/releases/tag/v4.3.0) runs entirely in the browser. It includes fresh PCAP analysis with the trained flow model, stored access-log replay, analyst reviews, topology and model audit. It makes no Render API calls and needs no cloud session. The separate Python backend and its networking experiments remain available in the repository. **Publishing status:** the [GitHub Pages update](docs/PUBLIC_DEPLOYMENT.md) is pending after a deployment timeout; use the downloadable release for the verified standalone build.
 
 ## ML and data engineering focus
 
@@ -36,7 +36,7 @@ The live console exposes source-IP fan-out, failure ratio and activity windows. 
 - Access-log views explore bundled, precomputed synthetic results. They do not compute new UEBA predictions. Old `#live` links open this replay.
 - The topology includes an accessible connection table and switches to it if 3D rendering fails.
 
-The public demo has no backend dependency. See [failure behavior, reproduction and limits](docs/DEPENDABILITY.md) and the [public verification record](docs/PUBLIC_DEPLOYMENT.md). The application includes a **Download offline HTML** button.
+The public demo has no backend dependency. Download the [standalone presentation HTML](https://github.com/Harthik777/CN-Project/releases/download/v4.3.0/SentinelUEBA-Offline.html) from the [v4.3.0 release](https://github.com/Harthik777/CN-Project/releases/tag/v4.3.0). See [failure behavior, reproduction and limits](docs/DEPENDABILITY.md) and the [public verification record](docs/PUBLIC_DEPLOYMENT.md).
 
 ## Try the demo
 

@@ -1,0 +1,12 @@
+{
+  "verified_at": "2026-09-10T11:14:48.124833+00:00",
+  "url": "http://127.0.0.1:8769/",
+  "bytes": 6760480,
+  "sha256": "45f4f5edf0cd3ca819a2903b28df0a5dd74c68684c37bd51550abaf3bdc7c10d",
+  "matches_packaged_frontend": true,
+  "backend_routes_absent": true,
+  "external_runtime_assets": [],
+  "content_security_policy": "connect-src 'self'; object-src 'none'; base-uri 'self'",
+  "offline_worker_matches_build": true,
+  "scope": "HTTP artifact checks; interactive behavior is verified separately in the browser"
+}
