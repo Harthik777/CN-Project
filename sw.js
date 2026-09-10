@@ -1,7 +1,7 @@
 /* BUILD_ID is filled from the HTML hash during the build. Only the public application shell is cached. */
 const ROOT = new URL(self.registration.scope);
 const PREFIX = `sentinel-shell:${ROOT.href}:`;
-const CACHE = `${PREFIX}3fbeb0e7cc8032b4`;
+const CACHE = `${PREFIX}919b198f59db9f3a`;
 async function shell() {
   const response = await fetch(ROOT.href,{cache:"reload"});
   if (!response.ok || !response.headers.get("content-type")?.includes("text/html")) throw new Error("Application shell unavailable");
