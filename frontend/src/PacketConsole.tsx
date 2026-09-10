@@ -27,12 +27,6 @@ async function request<T>(path: string, credential?: Credential | null, body?: B
   return apiRequest<T>(API,path,{credential,body,contentType,timeoutMs:12000,attempts:1});
 }
 
-function download(content: string, name: string, type: string) {
-  const url = URL.createObjectURL(new Blob([content], { type }));
-  const anchor = document.createElement("a"); anchor.href = url; anchor.download = name; anchor.click();
-  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
 export default function PacketConsole() {
   const [initial] = useState(() => readResult(CACHE_KEY,isReport));
   const [credential, setCredential] = useState<Credential | null>(saved);
@@ -117,11 +111,12 @@ export default function PacketConsole() {
     derived_capture_sha256: reportDataset.sha256, modification: realCaptures.modification,
     label_scope: realCaptures.label_scope,
   } : null;
-  function exportCsv() {
-    if (!report) return;
+  function exportCsv(): string {
+    if (!report) return "";
     const columns: (keyof Flow)[] = ["flow_id", "ip_version", "source_ip", "source_port", "destination_ip", "destination_port", "protocol", "packets", "ip_bytes", "payload_bytes", "duration_ms", "iat_mean_ms", "forward_packets", "reverse_packets", "anomaly_score", "is_alert"];
-    download([columns.join(","), ...report.flows.map(row => columns.map(key => JSON.stringify(row[key])).join(","))].join("\n"), "sentinel-packet-flows.csv", "text/csv;charset=utf-8");
+    return [columns.join(","), ...report.flows.map(row => columns.map(key => JSON.stringify(row[key])).join(","))].join("\n");
   }
+  const reportJson = report ? JSON.stringify({...report, execution: {description:origin}, dataset_provenance:datasetProvenance}, null, 2) : "";
   return <main className="live-workspace packet-workspace view-enter">
     <section className="live-intro">
       <div><div className="eyebrow">COMPUTER NETWORKS · FLOW DATA · MACHINE LEARNING</div><h2>From packets to network evidence</h2>
@@ -199,8 +194,9 @@ export default function PacketConsole() {
       <details><summary>Analysis limits</summary>{report.limitations.map(text => <p className="live-muted" key={text}>{text}</p>)}</details>
     </section>}
     <footer className="live-panel live-footer"><p>{stored ? "The latest report is stored in this browser for up to 7 days." : "No durable browser copy is available yet. Export important results."} Browser storage can be cleared or evicted. Export results you want to keep.{SERVER_ENABLED && " Server sessions last up to 24 hours and may be lost after a restart."}</p><div className="live-control-row">
-      <button disabled={!report} onClick={() => report && download(JSON.stringify({...report, execution: {description:origin}, dataset_provenance:datasetProvenance}, null, 2), "sentinel-packet-report.json", "application/json")}><Download size={15}/>Export report JSON</button>
-      <button disabled={!report} onClick={exportCsv}><Download size={15}/>Export flows CSV</button>
-      <button disabled={!!busy} onClick={() => { clearResult(CACHE_KEY); clearResult(KEY); setReport(null); setCredential(null); setStored(false); setOrigin("Ready for browser analysis"); setNotice("Browser report cleared."); }}>Clear browser report</button></div></footer>
+      {report && <><a className="packet-export" href={`data:application/json;charset=utf-8,${encodeURIComponent(reportJson)}`} download="sentinel-packet-report.json"><Download size={15}/>Export report JSON</a>
+      <a className="packet-export" href={`data:text/csv;charset=utf-8,${encodeURIComponent(exportCsv())}`} download="sentinel-packet-flows.csv"><Download size={15}/>Export flows CSV</a></>}
+      <button disabled={!!busy} onClick={() => { clearResult(CACHE_KEY); clearResult(KEY); setReport(null); setCredential(null); setStored(false); setOrigin("Ready for browser analysis"); setNotice("Browser report cleared."); }}>Clear browser report</button></div>
+      {report && <details><summary>Report text for manual copy</summary><p>If your browser suppresses downloads, select and copy the report below.</p><textarea aria-label="Packet report JSON" readOnly value={reportJson} rows={8}/></details>}</footer>
   </main>;
 }
