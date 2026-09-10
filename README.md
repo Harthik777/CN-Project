@@ -35,7 +35,7 @@ The live console exposes source-IP fan-out, failure ratio and activity windows. 
 - The latest packet report and live-event result are retained separately in this browser for up to seven days, with export and clear controls. These are browser copies, not replicated server storage.
 - Access-log inference still requires Render; saved results remain read-only when disconnected, and the bundled Alerts replay is available.
 
-Packet analysis defaults to **Browser only: no upload**. Download the [self-contained presentation HTML](https://github.com/Harthik777/CN-Project/releases/download/v4.1.1/SentinelUEBA-Offline.html) from the [v4.1.1 release](https://github.com/Harthik777/CN-Project/releases/tag/v4.1.1). See [failure behavior, reproduction and limits](docs/DEPENDABILITY.md) and the [public verification record](docs/PUBLIC_DEPLOYMENT.md).
+Packet analysis defaults to **Browser only: no upload**. Download the [self-contained presentation HTML](https://github.com/Harthik777/CN-Project/releases/download/v4.2.0/SentinelUEBA-Offline.html) from the [v4.2.0 release](https://github.com/Harthik777/CN-Project/releases/tag/v4.2.0). See [failure behavior, reproduction and limits](docs/DEPENDABILITY.md) and the [public verification record](docs/PUBLIC_DEPLOYMENT.md).
 
 ## Try the demo
 

@@ -1,0 +1,65 @@
+{
+  "verified_at": "2026-09-10T09:21:46.150280+00:00",
+  "artifacts": [
+    {
+      "url": "https://sentinelueba-harthik.onrender.com/",
+      "bytes": 6778692,
+      "sha256": "25288fbe2e26bfb3c3fbefc1306b09c45a9d8e29be234b311c8ef98e810800e5",
+      "packet_ui_present": true,
+      "offline_worker_present": true
+    },
+    {
+      "url": "https://harthik777.github.io/CN-Project/",
+      "bytes": 6778774,
+      "sha256": "919b198f59db9f3ab744f236b9de118d6ce44b03543a93b5c8e77196c1c07fa2",
+      "packet_ui_present": true,
+      "matches_packaged_frontend": true,
+      "offline_worker_present": true
+    }
+  ],
+  "pages_upload_preflight_passed": true,
+  "real_capture_checks": [
+    {
+      "id": "normal-dns-start",
+      "sha256": "b64c038bceb19ef88017f3665f0dedc732b27e32dbc37e66fc5eb844700ba41b",
+      "packets": 200,
+      "flows": 54,
+      "upload_and_readback_passed": true
+    },
+    {
+      "id": "normal-dns-middle",
+      "sha256": "b7af15b840e2708847742bb38017d01b7af3476ce443784a04f0fef8446e48fe",
+      "packets": 200,
+      "flows": 57,
+      "upload_and_readback_passed": true
+    },
+    {
+      "id": "normal-dns-end",
+      "sha256": "6d9170e9878b828d2673e6af84aed476f18aa2bbc85a4686b3fd0c7800261fc8",
+      "packets": 200,
+      "flows": 48,
+      "upload_and_readback_passed": true
+    },
+    {
+      "id": "ctu13-7-start",
+      "sha256": "785754ccf33d5f4e20de6faf7e4f9c85bfc6f239e44b26763b354303aa861bf6",
+      "packets": 200,
+      "flows": 20,
+      "upload_and_readback_passed": true
+    },
+    {
+      "id": "ctu13-7-middle",
+      "sha256": "0a6f231a465d91718f0fce38025d805fb93011711c78537f69ddbec5bd40a9b1",
+      "packets": 200,
+      "flows": 1,
+      "upload_and_readback_passed": true
+    },
+    {
+      "id": "ctu13-7-end",
+      "sha256": "2af81948a255a4c9cfba89ad15d84167a23b3f8d3689f9172151bb8e48754c54",
+      "packets": 200,
+      "flows": 14,
+      "upload_and_readback_passed": true
+    }
+  ]
+}

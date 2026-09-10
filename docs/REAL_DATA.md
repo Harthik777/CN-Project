@@ -23,7 +23,7 @@ Source URLs, file sizes, full SHA-256 values, source packet numbers, derived exc
 4. Compare each excerpt before and after redaction using the frozen model. All extracted flow fields, features, scores and flags must match exactly. Store source and derived hashes separately.
 
 ```powershell
-python -m pip install -r requirements-api.txt
+python -m pip install -r requirements-api.txt -r requirements-dev.txt
 python scripts/prepare_real_captures.py --download
 python -m unittest discover -s tests -p test_real_captures.py -v
 python scripts/verify_browser_packets.py
